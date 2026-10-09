@@ -425,22 +425,12 @@ html[data-smoke='webgl'] .stage__ribbons { display: none; }
   padding-top: 4px;
 }
 
-/* ---------- Nosso time ---------- */
-.pcard {
-  --w: min(21vw, 300px, calc((100svh - 260px) / 1.36));
-}
+/* ---------- Nosso time: tamanho original e a linha no degradê da logo acima do nome ---------- */
 .pcard__name::before {
-  display: none;
-}
-.pcard__name::after {
-  content: '';
-  display: block;
-  width: 28px;
-  height: 2px;
-  margin-top: 10px;
-  border-radius: 2px;
-  background: #fff;
-  box-shadow: 0 0 8px rgb(255 255 255 / 0.7);
+  width: 44px;
+  height: 3px;
+  background: linear-gradient(90deg, #6e6bf2, #4a86f3 55%, #00bbf9);
+  box-shadow: 0 0 12px rgb(74 134 243 / 0.75);
 }
 
 @media (max-width: 900px) {

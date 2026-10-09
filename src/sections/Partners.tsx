@@ -125,10 +125,7 @@ export function Partners() {
               <figure className="pcard__face">
                 <img src={p.photo} alt={`Foto de ${p.name}`} loading="lazy" decoding="async" />
                 <div className="pcard__shade" />
-                <figcaption className="pcard__name">
-                  <span className="sr-only">{p.name}</span>
-                  <span aria-hidden="true">{p.name.split(' ')[0]}</span>
-                </figcaption>
+                <figcaption className="pcard__name">{p.name}</figcaption>
               </figure>
             </li>
           ))}
