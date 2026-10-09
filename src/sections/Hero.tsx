@@ -124,11 +124,11 @@ export function Hero() {
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               scene.heroExit = self.progress;
-              scene.smokeDensity = 0.62 - 0.2 * self.progress;
+              scene.smokeDensity = 0.82 - 0.12 * self.progress;
             },
           },
         })
-        .to($('.stage__rings'), { opacity: 0.18, duration: 1 }, 0)
+        .to($('.stage__rings'), { opacity: 0.045, duration: 1 }, 0)
         .to($('.stage__aura'), { opacity: 0, duration: 0.8 }, 0)
         .to($('.stage__logo-fallback'), { opacity: 0, duration: 0.6 }, 0.4)
         .to($('.stage__static-logo'), { opacity: 0.045, scale: 1, duration: 0.55, ease: 'power1.out' }, 0.45);

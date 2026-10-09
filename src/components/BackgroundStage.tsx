@@ -55,6 +55,7 @@ export function BackgroundStage({ variant = 'hero' }: { variant?: 'hero' | 'stat
   }, []);
 
   return (
+    <>
     <div className="stage" aria-hidden="true" data-logo-mode={mode}>
       <svg className="stage__rings" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
         <defs>
@@ -78,5 +79,7 @@ export function BackgroundStage({ variant = 'hero' }: { variant?: 'hero' | 'stat
       <SmokeCanvas />
       <div className="stage__vignette" />
     </div>
+    <div className="stage__ribbons" aria-hidden="true" />
+    </>
   );
 }

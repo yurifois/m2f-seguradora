@@ -4,8 +4,6 @@ import { SERVICES, SERVICE_PHOTO, STATS, type Service } from '../data/content';
 import { finePointer, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { SectionHeading } from '../components/SectionHeading';
 import { Icon } from '../components/Icon';
-import { ServiceArt } from '../components/ServiceArt';
-import '../styles/art.css';
 import { sendToForm } from '../lib/lead';
 import { selectQuoteTab } from './Quotes';
 
@@ -52,7 +50,7 @@ export function Services() {
           v: end,
           ease: 'power2.out',
           onUpdate: () => (el.textContent = Math.round(obj.v).toLocaleString('pt-BR')),
-          scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 62%', scrub: 0.6 },
+          scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 88%', scrub: 0.6 },
         });
       });
     },
@@ -69,23 +67,11 @@ export function Services() {
             kicker="O que fazemos"
             title={
               <>
-                Conquistar, <em>cuidar</em> e proteger.
+                Conquistar,<br /> <em>cuidar</em> e proteger.
               </>
             }
-            lead="Consórcios para construir patrimônio, saúde para quem você ama e seguros para o que não pode faltar — tudo com um consultor ao seu lado do primeiro contato ao pós-venda."
+            lead={<>Consórcios para construir patrimônio.<br />Saúde para quem você ama. Seguros para proteger o que importa.</>}
           />
-          <dl className="stats">
-            {STATS.map((s) => (
-              <div key={s.label} className="stats__item">
-                <dt className="stats__value">
-                  {s.prefix}
-                  <span data-count={s.value}>{reducedMotion ? s.value : 0}</span>
-                  {s.suffix}
-                </dt>
-                <dd>{s.label}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
 
         <div className="services__grid" ref={gridRef}>
@@ -93,6 +79,19 @@ export function Services() {
             <ServiceCard key={s.id} service={s} />
           ))}
         </div>
+
+        <dl className="stats services__stats">
+          {STATS.map((s) => (
+            <div key={s.label} className="stats__item">
+              <dt className="stats__value">
+                {s.prefix}
+                <span data-count={s.value}>{reducedMotion ? s.value : 0}</span>
+                {s.suffix}
+              </dt>
+              <dd>{s.label}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );
@@ -108,6 +107,9 @@ function ServiceCard({ service: s }: { service: Service }) {
   const quote = s.quoteTab;
   return (
     <article className={`svc svc--${s.size}`} data-pillar={s.pillar} data-service={s.id} onPointerMove={onMove}>
+      <div className="svc__photo" aria-hidden="true">
+        <img src={SERVICE_PHOTO[s.id]} alt="" loading="lazy" decoding="async" />
+      </div>
       <div className="svc__top">
         <span className="svc__pillar">{s.pillar}</span>
         {s.isNew ? <span className="svc__new">Novo</span> : null}
@@ -121,25 +123,18 @@ function ServiceCard({ service: s }: { service: Service }) {
       <Icon name={s.icon} className="svc__icon" />
       <h3 className="svc__title">{s.title}</h3>
       <p className="svc__text">{s.text}</p>
-      <div className="svc__visual" aria-hidden="true">
-        <div className="svc__photo">
-          <img src={SERVICE_PHOTO[s.id]} alt="" loading="lazy" decoding="async" />
-        </div>
-        <div className="svc__art">
-          <ServiceArt id={s.id} />
-        </div>
-      </div>
+      <div className="svc__spacer" aria-hidden="true" />
       {s.steps ? (
         <ol className="svc__steps">
-          {s.steps.map((st, i) => (
+          {s.steps.map((st) => (
             <li key={st}>
-              <span>0{i + 1}</span>
+              <span aria-hidden="true" className="svc__check"><svg viewBox="0 0 18 18"><rect x="1" y="1" width="16" height="16" rx="3" /><path d="m5 9 3 3 5-6" /></svg></span>
               {st}
             </li>
           ))}
         </ol>
       ) : null}
-      <ul className="svc__tags">
+      <ul className="svc__tags sr-only" aria-label="Características">
         {s.tags.map((t) => (
           <li key={t}>{t}</li>
         ))}
