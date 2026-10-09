@@ -32,10 +32,10 @@ export function About() {
     () => {
       if (reducedMotion) return;
       scrubIn('.about .section-heading > *');
-      // o parágrafo acende palavra por palavra descendo e apaga subindo
+      // As palavras acendem com o scroll, mas permanecem legíveis no fundo claro.
       gsap.fromTo(
         '.about__word',
-        { opacity: 0.14 },
+        { opacity: 0.86 },
         {
           opacity: 1,
           ease: 'none',

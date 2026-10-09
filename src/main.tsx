@@ -6,6 +6,7 @@ import '@fontsource-variable/manrope/wght.css';
 import './styles/base.css';
 import './styles/sections.css';
 import App from './App';
+import './styles/light-visual.css';
 
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 

@@ -131,7 +131,7 @@ export function Hero() {
         .to($('.stage__rings'), { opacity: 0.18, duration: 1 }, 0)
         .to($('.stage__aura'), { opacity: 0, duration: 0.8 }, 0)
         .to($('.stage__logo-fallback'), { opacity: 0, duration: 0.6 }, 0.4)
-        .to($('.stage__static-logo'), { opacity: 0.13, scale: 1, duration: 0.55, ease: 'power1.out' }, 0.45);
+        .to($('.stage__static-logo'), { opacity: 0.045, scale: 1, duration: 0.55, ease: 'power1.out' }, 0.45);
     },
     { scope: root },
   );
