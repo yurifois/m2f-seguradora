@@ -59,8 +59,8 @@ export function BackgroundStage({ variant = 'hero' }: { variant?: 'hero' | 'stat
       <svg className="stage__rings" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
         <defs>
           <linearGradient id="ring-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#7A6CF5" />
-            <stop offset="1" stopColor="#2F9BF8" />
+            <stop offset="0" stopColor="#15566A" />
+            <stop offset="1" stopColor="#09A9BF" />
           </linearGradient>
         </defs>
         <circle className="ring ring--1" cx="500" cy="80" r="330" pathLength="1" />

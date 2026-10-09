@@ -79,9 +79,9 @@ void main() {
   dens *= mix(1.2, 0.6, uv.y);       // mais densa embaixo, rarefeita no alto
   dens *= 1.0 - 0.45 * exp(-md * md * 12.0);
 
-  vec3 cold = vec3(0.80, 0.85, 1.0);
-  vec3 vio  = vec3(0.47, 0.47, 0.96);
-  vec3 cy   = vec3(0.15, 0.66, 0.98);
+  vec3 cold = vec3(0.98, 0.98, 0.95);
+  vec3 vio  = vec3(0.72, 0.84, 0.83);
+  vec3 cy   = vec3(0.45, 0.76, 0.80);
   vec3 col = mix(vio, cold, smoothstep(0.45, 0.95, f));
   col = mix(col, cy, clamp(q.y * 0.6 + 0.3, 0.0, 1.0) * 0.3);
 

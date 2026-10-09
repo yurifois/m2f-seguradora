@@ -65,10 +65,10 @@ export function createLogoScene(canvas: HTMLCanvasElement, { anchor, onReady }: 
     curveSegments: 8,
   });
 
-  // degradê do logobrand: violeta no topo, ciano embaixo (y do SVG cresce para baixo)
-  const top = new Color('#6E6BF2');
-  const mid = new Color('#4A86F3');
-  const bot = new Color('#00BBF9');
+  // degradê da paleta clara: petróleo no topo, turquesa embaixo (y do SVG cresce para baixo)
+  const top = new Color('#1B7184');
+  const mid = new Color('#3FA5B4');
+  const bot = new Color('#66CED6');
   const pos = geo.getAttribute('position');
   const colors = new Float32Array(pos.count * 3);
   const c = new Color();
@@ -113,10 +113,10 @@ export function createLogoScene(canvas: HTMLCanvasElement, { anchor, onReady }: 
   const key = new DirectionalLight(0xffffff, 2.2);
   key.position.set(3, 5, 8);
   scene.add(key);
-  const rimV = new PointLight(0x7b6cff, 60, 30);
+  const rimV = new PointLight(0x1b7184, 60, 30);
   rimV.position.set(-5, 3, -3);
   scene.add(rimV);
-  const rimC = new PointLight(0x00c2ff, 60, 30);
+  const rimC = new PointLight(0x09a9bf, 60, 30);
   rimC.position.set(5, -3, -2);
   scene.add(rimC);
 

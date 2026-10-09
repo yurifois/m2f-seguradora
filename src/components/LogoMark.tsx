@@ -16,9 +16,9 @@ export function LogoMark({ className, title = 'M2F Associados', variant = 'gradi
       {variant === 'gradient' ? (
         <defs>
           <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#6468EE" />
-            <stop offset=".5" stopColor="#4887F1" />
-            <stop offset="1" stopColor="#00B5F7" />
+            <stop offset="0" stopColor="#15566A" />
+            <stop offset=".5" stopColor="#00768C" />
+            <stop offset="1" stopColor="#007F94" />
           </linearGradient>
         </defs>
       ) : null}
