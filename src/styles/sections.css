@@ -1502,8 +1502,16 @@
   .form__grid {
     grid-template-columns: 1fr;
   }
-  .form__nav .btn--primary {
-    flex: 1;
+  /* no celular os botões ficam empilhados e ocupam a largura toda */
+  .form__nav {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .form__nav .btn {
+    width: 100%;
+  }
+  .form__fine {
+    text-align: center;
   }
 }
 

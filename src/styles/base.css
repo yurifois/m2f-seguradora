@@ -425,6 +425,24 @@ main > section {
 .chip:active {
   transform: scale(0.96);
 }
+.chip--radio {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.chip--radio input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.chip--radio:has(input:focus-visible) {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+.chip--radio.is-on,
 .chip[aria-pressed='true'] {
   color: #fff;
   border-color: rgb(110 107 242 / 0.9);

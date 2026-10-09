@@ -113,7 +113,7 @@ function validate(v: Values): Errors {
   if (digits.length < 10) e.whatsapp = 'Confira o número com DDD.';
   if (v.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email.trim()))
     e.email = 'Confira o @ e o domínio.';
-  if (!v.produtos.length) e.produtos = 'Escolha pelo menos um assunto para direcionarmos o atendimento.';
+  if (!v.produtos.length) e.produtos = 'Escolha um assunto para direcionarmos o atendimento.';
   if (!v.consentimento) e.consentimento = 'Autorize o contato para podermos responder.';
   return e;
 }
@@ -194,7 +194,7 @@ export function Contact() {
         setStatus('idle');
         setV((prev) => ({
           ...prev,
-          produtos: Array.from(new Set([...prev.produtos, ...d.products])),
+          produtos: d.products.slice(0, 1),
           resumo: d.details || prev.resumo,
         }));
         setErrors((prev) => ({ ...prev, produtos: undefined }));
@@ -282,7 +282,7 @@ export function Contact() {
 
   const next = () => {
     if (step === 0 && !v.produtos.length) {
-      setErrors({ produtos: 'Escolha pelo menos um assunto para direcionarmos o atendimento.' });
+      setErrors({ produtos: 'Escolha um assunto para direcionarmos o atendimento.' });
       return;
     }
     goTo(step + 1);
@@ -460,29 +460,28 @@ export function Contact() {
                         <>
                           <div className="form__head">
                             <h3 tabIndex={-1}>O que você procura?</h3>
-                            <p>Escolha um ou mais assuntos — leva menos de um minuto.</p>
+                            <p>Escolha o assunto principal. Quer falar de outro também? Conte na próxima etapa.</p>
                           </div>
                           <fieldset
                             className={`form__products${errors.produtos ? ' has-error' : ''}`}
                             aria-describedby={errors.produtos ? 'f-produtos-err' : undefined}
                           >
-                            <legend className="sr-only">Assuntos *</legend>
+                            <legend className="sr-only">Assunto *</legend>
+                            {/* escolha única: botões de opção nativos com cara de chip (setas do teclado inclusas) */}
                             <div className="chips__row">
-                              {PRODUCTS.map((p, i) => {
-                                const on = v.produtos.includes(p);
+                              {PRODUCTS.map((p) => {
+                                const on = v.produtos[0] === p;
                                 return (
-                                  <button
-                                    key={p}
-                                    type="button"
-                                    name={i === 0 ? 'produtos' : undefined}
-                                    className="chip"
-                                    aria-pressed={on}
-                                    onClick={() =>
-                                      set('produtos', on ? v.produtos.filter((x) => x !== p) : [...v.produtos, p])
-                                    }
-                                  >
+                                  <label key={p} className={`chip chip--radio${on ? ' is-on' : ''}`}>
+                                    <input
+                                      type="radio"
+                                      name="produtos"
+                                      value={p}
+                                      checked={on}
+                                      onChange={() => set('produtos', [p])}
+                                    />
                                     {PRODUCT_LABEL[p]}
-                                  </button>
+                                  </label>
                                 );
                               })}
                             </div>
