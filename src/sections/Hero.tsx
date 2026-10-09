@@ -124,7 +124,7 @@ export function Hero() {
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               scene.heroExit = self.progress;
-              scene.smokeDensity = 0.82 - 0.12 * self.progress;
+              scene.smokeDensity = 0.82 - 0.22 * self.progress;
             },
           },
         })
@@ -151,9 +151,9 @@ export function Hero() {
           </span>
         </h1>
         <span className="hero__rule" aria-hidden="true" />
-        <p className="hero__kicker hero__reveal">Consórcios · Saúde · Seguros</p>
+        <p className="hero__kicker hero__reveal">Consórcios • Saúde • Seguros</p>
         <p className="hero__tagline hero__reveal">
-          Planejamento para <em>proteger</em> e <em>conquistar</em>.
+          Planejamento para <em>proteger e conquistar.</em>
         </p>
         <div className="hero__ctas hero__reveal" onFocusCapture={revealOnFocus}>
           <a
@@ -165,6 +165,9 @@ export function Hero() {
             }}
           >
             Simular meu consórcio
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
           </a>
           <a
             className="btn btn--ghost"

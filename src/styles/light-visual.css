@@ -42,7 +42,9 @@ body {
   from { background-position: 45% -25px; }
   to { background-position: 55% 60px; }
 }
-.smoke { mask-image: none; -webkit-mask-image: none; opacity: .5; mix-blend-mode: multiply; }
+/* fumaça fluida em WebGL; a imagem estática (.stage__ribbons) só aparece se o WebGL falhar */
+.smoke { mask-image: none; -webkit-mask-image: none; opacity: 1; mix-blend-mode: multiply; }
+html[data-smoke='webgl'] .stage__ribbons { display: none; }
 .smoke[data-fallback] {
   background: radial-gradient(ellipse at 15% 80%, rgb(15 178 210 / .3), transparent 70%),
     radial-gradient(ellipse at 90% 15%, rgb(30 170 201 / .23), transparent 65%);
@@ -260,3 +262,223 @@ body {
   .stats__value { font-size: 1.35rem; }
 }
 @media (prefers-reduced-motion: reduce) { .stage__ribbons { animation: none; will-change: auto; } }
+
+/* ==========================================================================
+   Impacto: títulos com mais contraste, brilho e força (marinho profundo × ciano vivo)
+   ========================================================================== */
+:root {
+  --fg: #03253a;
+  --shine: linear-gradient(100deg, #006ca8 0%, #0090cc 24%, #10b2e4 42%, #0096d0 58%, #0068a6 80%, #008cc8 100%);
+}
+.display,
+.svc__title,
+.faq-group__head h2,
+.faq-cta__card h2,
+.about__pillar h3 {
+  font-weight: 700;
+  color: var(--fg);
+}
+.display {
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 0.9), 0 10px 30px rgb(3 37 58 / 0.12);
+}
+.display em,
+.grad-text,
+.hero__tagline em,
+.faq-cta__card h2 em {
+  font-weight: 700;
+  background-image: var(--shine);
+  background-size: 220% 100%;
+  filter: drop-shadow(0 0 1px rgb(0 70 115 / 0.55)) drop-shadow(0 4px 14px rgb(0 160 215 / 0.4));
+  animation: m2f-shine 7s ease-in-out infinite alternate;
+}
+@keyframes m2f-shine {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+.kicker {
+  color: #00698f;
+  font-weight: 800;
+}
+.kicker span {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #0090c8, #22d0ee);
+  box-shadow: 0 0 10px rgb(0 190 230 / 0.55);
+}
+.lead {
+  color: #0f3a50;
+  font-weight: 500;
+}
+
+/* ---------- menu como na referência ---------- */
+.header__wordmark {
+  padding-left: 14px;
+  border-left: 1px solid rgb(3 37 58 / 0.35);
+  line-height: 1.7;
+  font-weight: 700;
+}
+.header.is-stuck .header__bar {
+  background: rgb(255 254 250 / 0.9);
+}
+.header__cta svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- hero ---------- */
+.stage__rings {
+  opacity: 0.4;
+}
+.hero__name {
+  font-weight: 700;
+}
+.hero__name-inner {
+  filter: drop-shadow(0 6px 18px rgb(0 60 95 / 0.18));
+}
+.hero__char {
+  background-image: linear-gradient(180deg, #021f31 0%, #053f5e 62%, #07658d 100%);
+}
+.hero__kicker {
+  margin-top: clamp(12px, 2svh, 22px);
+  color: #0b3a52;
+  font-weight: 700;
+}
+.hero__tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.25rem, 0.95rem + 1vw, 1.8rem);
+  color: #0b2f45;
+}
+.hero__tagline em {
+  font-size: 1em;
+}
+.hero__rule,
+.hero__meta {
+  display: none;
+}
+
+/* ---------- O que fazemos (seção Sobre) ---------- */
+.about__main {
+  padding-right: clamp(24px, 4vw, 64px);
+  border-right: 1px solid var(--line-2);
+}
+.about__statement {
+  color: #123e54;
+}
+.about__trust {
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  background: linear-gradient(100deg, rgb(222 245 249 / 0.96), rgb(242 251 252 / 0.92));
+  border-color: #a9dbe4;
+  box-shadow: 0 10px 26px -18px rgb(0 110 150 / 0.45);
+}
+.about__trust svg {
+  width: 40px;
+  height: 40px;
+  stroke: #0090bf;
+  stroke-width: 1.6;
+  filter: drop-shadow(0 2px 6px rgb(0 170 220 / 0.3));
+}
+.about__trust span {
+  display: grid;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.about__trust strong {
+  color: var(--fg);
+  font-weight: 700;
+}
+.about__rail {
+  display: none;
+}
+.about__pillar {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+.about__icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #f6fdfe, #dcf2f6);
+  box-shadow: inset 0 0 0 1px #c6e8ee, 0 8px 18px -10px rgb(0 120 160 / 0.5);
+}
+.about__icon svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: #0090bf;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.about__num {
+  padding-top: 4px;
+}
+
+/* ---------- Nosso time ---------- */
+.pcard {
+  --w: min(21vw, 300px, calc((100svh - 260px) / 1.36));
+}
+.pcard__name::before {
+  display: none;
+}
+.pcard__name::after {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 2px;
+  margin-top: 10px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 0 8px rgb(255 255 255 / 0.7);
+}
+
+@media (max-width: 900px) {
+  .about__main {
+    padding-right: 0;
+    border-right: 0;
+  }
+}
+@media (max-width: 520px) {
+  .about__icon {
+    width: 44px;
+    height: 44px;
+  }
+  .about__icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .about__pillar {
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .display em,
+  .grad-text,
+  .hero__tagline em,
+  .faq-cta__card h2 em {
+    animation: none;
+  }
+}
+
+/* no hero a logo 3D fica à frente da fumaça (nítida); a logo estática pós-hero continua atrás */
+.smoke {
+  z-index: 1;
+}
+.stage__logo3d,
+.stage__logo-fallback {
+  z-index: 2;
+}
+.stage__vignette {
+  z-index: 3;
+}

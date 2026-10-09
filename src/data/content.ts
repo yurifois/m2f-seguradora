@@ -24,7 +24,7 @@ export const NAV = [
   { id: 'sobre', label: 'Sobre' },
   { id: 'associados', label: 'Associados' },
   { id: 'servicos', label: 'Serviços' },
-  { id: 'cotacoes', label: 'Cotações' },
+  { id: 'cotacoes', label: 'Calculadora' },
   { id: 'contato', label: 'Contato' },
 ] as const;
 

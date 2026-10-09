@@ -1,8 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { reducedMotion, scene } from '../lib/motion';
 
-// Névoa em shader de tela cheia: ruído simplex (sem blocos, estável até em GPU de celular
-// com precisão média) + domain warping, renderizada em resolução adaptativa e esticada por CSS.
+// Fumaça turquesa fluida: a imagem das faixas de fumaça (organza) é usada como textura e
+// escoa continuamente por um campo de fluxo (técnica de "flow map" com duas fases), com
+// ondulação lenta, parallax na rolagem e o cursor afastando a fumaça. Por baixo, uma névoa
+// procedural bem leve. Tudo num único shader, em resolução adaptativa.
+const RIBBONS_SRC = '/img/editorial/fumaca.webp';
+const RIBBONS_ASPECT = 1024 / 1536; // altura / largura da imagem
+
 const VERT = `attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }`;
 
 const FRAG = `
@@ -11,11 +16,16 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-uniform vec2 uRes;
+uniform vec2 uRes;        // tamanho do canvas (px)
+uniform vec2 uView;       // tamanho da janela (px CSS)
 uniform float uTime;
-uniform float uScroll;
-uniform vec2 uMouse;
+uniform float uScroll;    // rolagem em px CSS
+uniform vec2 uMouse;      // 0..1
 uniform float uDensity;
+uniform sampler2D uTex;
+uniform float uReady;
+uniform float uImgW;      // largura da faixa de fumaça na tela (px CSS)
+uniform float uAspect;    // altura / largura da imagem
 
 // simplex 2D (Ashima Arts / Stefan Gustavson, MIT)
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -45,48 +55,66 @@ float snoise(vec2 v) {
 }
 float fbm(vec2 p) {
   float v = 0.0, a = 0.55;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 3; i++) {
     v += a * snoise(p);
     p = p * 2.0 + vec2(17.1, 9.7);
-    a *= 0.48;
+    a *= 0.5;
   }
-  return v; // ~[-1, 1]
+  return v;
+}
+
+// a imagem se repete na vertical espelhada (sem emenda) e some nas bordas laterais
+vec4 ribbon(vec2 uv) {
+  uv.y = 1.0 - abs(mod(uv.y, 2.0) - 1.0);
+  float edge = smoothstep(0.0, 0.03, uv.x) * smoothstep(1.0, 0.97, uv.x);
+  return texture2D(uTex, vec2(clamp(uv.x, 0.0, 1.0), uv.y)) * edge;
 }
 
 void main() {
   vec2 uv = gl_FragCoord.xy / uRes;
-  float aspect = uRes.x / uRes.y;
-  vec2 p = vec2((uv.x - 0.5) * aspect, uv.y - 0.5);
-  float t = mod(uTime, 3000.0) * 0.035;
-  p.y -= uScroll * 0.3;              // acompanha a rolagem (parallax)
+  vec2 css = vec2(uv.x * uView.x, (1.0 - uv.y) * uView.y); // px CSS a partir do topo
+  float t = mod(uTime, 3600.0);
 
-  // o cursor afasta a fumaça
-  vec2 m = vec2((uMouse.x - 0.5) * aspect, 0.5 - uMouse.y);
-  m.y -= uScroll * 0.3;
-  vec2 dm = p - m;
-  float md = length(dm);
-  p += normalize(dm + 1e-4) * 0.08 * exp(-md * md * 14.0);
+  // ---- faixas de fumaça (textura) escoando
+  vec4 rib = vec4(0.0);
+  if (uReady > 0.5) {
+    float ih = uImgW * uAspect;
+    vec2 iuv = vec2((css.x - uView.x * 0.5) / uImgW + 0.5, (css.y + uScroll * 0.35) / ih);
+    iuv.y += t * 0.006;                                   // sobe devagar
+    iuv.x += sin(iuv.y * 5.0 + t * 0.32) * 0.014;         // ondulação ampla
+    iuv.y += sin(iuv.x * 4.2 - t * 0.27) * 0.012;
 
-  // nuvens grandes e macias que sobem e se retorcem devagar
-  vec2 rise = vec2(0.0, t);
-  vec2 q = vec2(fbm(p * 0.9 - rise * 0.8), fbm(p * 0.9 + vec2(3.1, 7.4) - rise * 0.6));
-  float f = fbm(p * 1.35 + q * 0.85 - rise * 1.2 + vec2(t * 0.12, 0.0)) * 0.5 + 0.5;
-  float billow = smoothstep(0.36, 0.95, f);
-  billow = pow(billow, 1.35);
-  float haze = fbm(p * 0.45 - rise * 0.4 + vec2(9.0, 1.0)) * 0.5 + 0.5;
+    // campo de fluxo suave + o cursor empurrando
+    vec2 pf = css / uView.y * 1.3;
+    vec2 flow = vec2(snoise(pf + vec2(0.0, t * 0.06)), snoise(pf + vec2(7.3, 2.1) - vec2(t * 0.05, 0.0)));
+    vec2 m = uMouse * uView;
+    vec2 dm = (css - m) / uView.y;
+    float md = length(dm);
+    flow += normalize(dm + 1e-4) * 1.4 * exp(-md * md * 16.0);
 
-  float dens = (billow * 0.9 + haze * haze * 0.3) * uDensity;
-  dens *= mix(1.2, 0.6, uv.y);       // mais densa embaixo, rarefeita no alto
-  dens *= 1.0 - 0.45 * exp(-md * md * 12.0);
+    float speed = 0.034;
+    float ph0 = fract(t * 0.09);
+    float ph1 = fract(t * 0.09 + 0.5);
+    vec4 c0 = ribbon(iuv + flow * speed * ph0);
+    vec4 c1 = ribbon(iuv + flow * speed * ph1 + vec2(0.0, 0.003));
+    rib = mix(c0, c1, abs((0.5 - ph0) / 0.5));
+  }
 
-  vec3 cold = vec3(0.97, 0.99, 1.0);
-  vec3 vio  = vec3(0.50, 0.78, 0.82);
-  vec3 cy   = vec3(0.17, 0.64, 0.74);
-  vec3 col = mix(vio, cold, smoothstep(0.45, 0.95, f));
-  col = mix(col, cy, clamp(q.y * 0.6 + 0.3, 0.0, 1.0) * 0.3);
+  // ---- névoa turquesa macia por baixo
+  vec2 ph = vec2((uv.x - 0.5) * uView.x / uView.y, uv.y - 0.5);
+  ph.y -= uScroll / uView.y * 0.3;
+  vec2 rise = vec2(0.0, t * 0.035);
+  vec2 q = vec2(fbm(ph * 0.9 - rise), fbm(ph * 0.9 + vec2(3.1, 7.4) - rise * 0.7));
+  float f = fbm(ph * 1.4 + q * 0.9 - rise * 1.2) * 0.5 + 0.5;
+  float haze = smoothstep(0.4, 0.95, f) * uDensity * 0.22;
+  vec3 hazeCol = mix(vec3(0.33, 0.76, 0.86), vec3(0.62, 0.9, 0.95), f);
 
-  float alpha = clamp(dens * 1.45, 0.0, 0.58);
-  gl_FragColor = vec4(col * alpha, alpha);
+  // faixas mais fortes no hero, um pouco mais suaves atrás do conteúdo
+  float k = 0.5 + 0.48 * uDensity;
+  float ra = rib.a * k;
+  vec3 col = rib.rgb * k + hazeCol * haze * (1.0 - ra);
+  float alpha = ra + haze * (1.0 - ra);
+  gl_FragColor = vec4(col, alpha);
 }`;
 
 function compile(gl: WebGLRenderingContext, type: number, src: string) {
@@ -134,60 +162,90 @@ export function SmokeCanvas() {
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const u = {
       res: gl.getUniformLocation(prog, 'uRes'),
+      view: gl.getUniformLocation(prog, 'uView'),
       time: gl.getUniformLocation(prog, 'uTime'),
       scroll: gl.getUniformLocation(prog, 'uScroll'),
       mouse: gl.getUniformLocation(prog, 'uMouse'),
       density: gl.getUniformLocation(prog, 'uDensity'),
+      tex: gl.getUniformLocation(prog, 'uTex'),
+      ready: gl.getUniformLocation(prog, 'uReady'),
+      imgW: gl.getUniformLocation(prog, 'uImgW'),
+      aspect: gl.getUniformLocation(prog, 'uAspect'),
     };
+    gl.uniform1i(u.tex, 0);
+    gl.uniform1f(u.ready, 0);
+    gl.uniform1f(u.aspect, RIBBONS_ASPECT);
 
-    // resolução adaptativa: ~300 mil pixels no máximo (celular fica perto de 60% da tela,
-    // full HD perto de 38%) — nítido o bastante para fios finos e leve para qualquer GPU
+    // resolução adaptativa: até ~750 mil pixels — nítido para as bordas da fumaça e leve
     const resize = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const scale = Math.min(0.6, Math.sqrt(300_000 / (w * h)));
+      const scale = Math.min(0.9, Math.sqrt(750_000 / (w * h)));
       canvas.width = Math.max(2, Math.round(w * scale));
       canvas.height = Math.max(2, Math.round(h * scale));
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(u.res, canvas.width, canvas.height);
+      gl.uniform2f(u.view, w, h);
+      gl.uniform1f(u.imgW, Math.max(w * 1.15, 850));
     };
     resize();
     window.addEventListener('resize', resize);
 
     let raf = 0;
     let running = true;
+    let disposed = false;
     const t0 = performance.now();
     let density = scene.smokeDensity;
-    let scroll = window.scrollY / window.innerHeight;
+    let scroll = window.scrollY;
     let mx = 0.5;
     let my = 0.5;
     let last = 0;
 
-    const frame = (now: number) => {
-      if (!running) return;
-      raf = requestAnimationFrame(frame);
-      if (now - last < 28) return; // ~35 fps é suficiente para fumaça
-      last = now;
+    const draw = (now: number) => {
       density += (scene.smokeDensity - density) * 0.05;
-      scroll += (window.scrollY / window.innerHeight - scroll) * 0.08;
-      mx += (scene.mouseX - mx) * 0.04;
-      my += (scene.mouseY - my) * 0.04;
+      scroll += (window.scrollY - scroll) * 0.1;
+      mx += (scene.mouseX - mx) * 0.05;
+      my += (scene.mouseY - my) * 0.05;
       gl.uniform1f(u.time, (now - t0) / 1000);
       gl.uniform1f(u.scroll, scroll);
       gl.uniform2f(u.mouse, mx, my);
       gl.uniform1f(u.density, density);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
-
-    if (reducedMotion) {
-      gl.uniform1f(u.time, 12);
-      gl.uniform1f(u.scroll, 0);
-      gl.uniform2f(u.mouse, -5, -5);
-      gl.uniform1f(u.density, 0.7);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    } else {
+    const frame = (now: number) => {
+      if (!running) return;
       raf = requestAnimationFrame(frame);
-    }
+      if (now - last < 28) return; // ~35 fps é suficiente para fumaça
+      last = now;
+      draw(now);
+    };
+
+    // textura das faixas de fumaça
+    const tex = gl.createTexture();
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = RIBBONS_SRC;
+    img
+      .decode()
+      .then(() => {
+        if (disposed) return;
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.uniform1f(u.ready, 1);
+        document.documentElement.dataset.smoke = 'webgl'; // esconde a versão estática em CSS
+        if (reducedMotion) draw(t0 + 12_000);
+      })
+      .catch(() => {
+        /* sem a textura: fica só a névoa procedural (e a fumaça estática do CSS) */
+      });
+
+    if (reducedMotion) draw(t0 + 12_000);
+    else raf = requestAnimationFrame(frame);
 
     const onVis = () => {
       if (document.hidden) {
@@ -201,10 +259,12 @@ export function SmokeCanvas() {
     document.addEventListener('visibilitychange', onVis);
 
     return () => {
+      disposed = true;
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', onVis);
+      gl.deleteTexture(tex);
       gl.deleteBuffer(buf);
       gl.deleteProgram(prog);
     };

@@ -65,10 +65,10 @@ export function createLogoScene(canvas: HTMLCanvasElement, { anchor, onReady }: 
     curveSegments: 8,
   });
 
-  // degradê da paleta clara: petróleo no topo, turquesa embaixo (y do SVG cresce para baixo)
-  const top = new Color('#1B7184');
-  const mid = new Color('#3FA5B4');
-  const bot = new Color('#66CED6');
+  // degradê do logobrand: violeta no topo, ciano embaixo (y do SVG cresce para baixo)
+  const top = new Color('#6E6BF2');
+  const mid = new Color('#4A86F3');
+  const bot = new Color('#00BBF9');
   const pos = geo.getAttribute('position');
   const colors = new Float32Array(pos.count * 3);
   const c = new Color();
@@ -81,14 +81,14 @@ export function createLogoScene(canvas: HTMLCanvasElement, { anchor, onReady }: 
   geo.setAttribute('color', new Float32BufferAttribute(colors, 3));
   geo.translate(-LOGO_W / 2, -LOGO_H / 2, -depth / 2);
 
-  const uniforms = { uWhite: { value: 0 }, uGlow: { value: 0.3 } };
+  const uniforms = { uWhite: { value: 0 }, uGlow: { value: 0.1 } };
   const material = new MeshPhysicalMaterial({
     vertexColors: true,
-    metalness: 0.35,
-    roughness: 0.24,
+    metalness: 0.55,
+    roughness: 0.18,
     clearcoat: 1,
     clearcoatRoughness: 0.06,
-    envMapIntensity: 1.1,
+    envMapIntensity: 1.5,
   });
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uWhite = uniforms.uWhite;
@@ -110,13 +110,13 @@ export function createLogoScene(canvas: HTMLCanvasElement, { anchor, onReady }: 
   pivot.add(mesh);
   scene.add(pivot);
 
-  const key = new DirectionalLight(0xffffff, 2.2);
+  const key = new DirectionalLight(0xffffff, 2.8);
   key.position.set(3, 5, 8);
   scene.add(key);
-  const rimV = new PointLight(0x1b7184, 60, 30);
+  const rimV = new PointLight(0x7b6cff, 60, 30);
   rimV.position.set(-5, 3, -3);
   scene.add(rimV);
-  const rimC = new PointLight(0x09a9bf, 60, 30);
+  const rimC = new PointLight(0x00c2ff, 60, 30);
   rimC.position.set(5, -3, -2);
   scene.add(rimC);
 
@@ -182,8 +182,8 @@ export function createLogoScene(canvas: HTMLCanvasElement, { anchor, onReady }: 
     pivot.rotation.set(tiltX * slow + bob, rotY, tiltZ * slow);
 
     uniforms.uWhite.value = smooth(0.05, 0.7, exit);
-    material.metalness = 0.35 - 0.27 * uniforms.uWhite.value;
-    material.roughness = 0.24 + 0.04 * uniforms.uWhite.value;
+    material.metalness = 0.55 - 0.45 * uniforms.uWhite.value;
+    material.roughness = 0.18 + 0.08 * uniforms.uWhite.value;
     canvas.style.opacity = String((1 - smooth(0.55, 1, exit)) * ei);
 
     renderer.render(scene, camera);

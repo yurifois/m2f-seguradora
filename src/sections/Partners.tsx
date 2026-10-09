@@ -111,13 +111,13 @@ export function Partners() {
       <div className="partners__pin">
         <SectionHeading
           id="associados-title"
-          kicker="Os associados"
+          kicker="Nosso time"
           title={
             <>
               Quem está por trás da <em>M2F</em>
             </>
           }
-          lead="Três sócios, um mesmo jeito de atender: perto, com transparência e estratégia."
+          lead="Três sócios, a mesma visão: transformar planos em conquistas."
         />
         <ul className="partners__row">
           {PARTNERS.map((p) => (
@@ -125,7 +125,10 @@ export function Partners() {
               <figure className="pcard__face">
                 <img src={p.photo} alt={`Foto de ${p.name}`} loading="lazy" decoding="async" />
                 <div className="pcard__shade" />
-                <figcaption className="pcard__name">{p.name}</figcaption>
+                <figcaption className="pcard__name">
+                  <span className="sr-only">{p.name}</span>
+                  <span aria-hidden="true">{p.name.split(' ')[0]}</span>
+                </figcaption>
               </figure>
             </li>
           ))}

@@ -107,7 +107,7 @@ export function Quotes() {
         <SectionHeading
           id="cotacoes-title"
           align="split"
-          kicker="Cotações"
+          kicker="Calculadora"
           title={
             <>
               Simule em segundos. <em>Decida</em> com calma.

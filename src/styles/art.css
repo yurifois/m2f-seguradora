@@ -405,36 +405,28 @@
   }
 }
 
-/* ---------- encaixe nos cards ---------- */
-.svc .art {
-  margin: 2px 0 4px;
-  max-height: 96px;
+/* ---------- encaixe nos cards (layout claro com foto à direita) ---------- */
+.svc__art {
+  width: clamp(110px, 9.5vw, 135px);
+  margin: 2px 0 0;
+  filter: drop-shadow(0 2px 6px rgb(0 150 190 / 0.18));
 }
-.svc--tall .art {
-  margin: auto 0;
-  max-height: none;
+.svc--xl .svc__art {
+  width: clamp(96px, 8vw, 112px);
 }
-.svc--xl .art {
-  position: absolute;
-  right: clamp(18px, 2.4vw, 36px);
-  bottom: clamp(56px, 7vw, 76px);
-  width: min(40%, 300px);
-  max-height: none;
-  margin: 0;
-  pointer-events: none;
+.svc__art .art {
+  width: 100%;
+  height: auto;
 }
-.svc--xl .svc__steps {
-  max-width: min(420px, 56%);
+/* plano de saúde: o eletrocardiograma corre no meio do card, sobre o jaleco */
+.svc--tall .svc__spacer {
+  display: flex;
+  align-items: center;
 }
-@media (max-width: 620px) {
-  .svc--xl .art {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    width: min(100%, 300px);
-    margin: 8px auto 0;
-  }
-  .svc--xl .svc__steps {
-    max-width: none;
-  }
+.svc--tall .svc__spacer .art {
+  width: 100%;
+  filter: drop-shadow(0 2px 8px rgb(0 160 200 / 0.35));
+}
+.svc--tall .art-pulse-run {
+  stroke-width: 2.2;
 }

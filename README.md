@@ -47,8 +47,12 @@ o gerador de imagens integrado a partir da referência enviada pelo usuário e
 convertidos para WebP, preservando a transparência da fumaça.
 
 Prompts e destino dos assets: [docs/visual-reference.md](docs/visual-reference.md).
-Os efeitos GSAP de entrada e scroll permanecem ativos. O shader WebGL continua
-respondendo ao cursor e à rolagem; uma camada de faixas de fumaça se move sobre ele.
+Os efeitos GSAP de entrada e scroll permanecem ativos. A fumaça turquesa
+(`fumaca.webp`) é uma textura dentro do shader WebGL (`SmokeCanvas.tsx`): escoa por um
+campo de fluxo, ondula, sobe devagar, reage ao cursor e à rolagem; a versão estática em
+CSS só aparece se o WebGL falhar. A logo 3D mantém o degradê original do logobrand
+(violeta → azul → ciano) e fica à frente da fumaça no hero. As ilustrações animadas dos
+cards de serviço (`ServiceArt.tsx`) rodam sobre as fotografias.
 Em `prefers-reduced-motion`, o fundo permanece visível e estático.
 
 ## Créditos das fotografias anteriores

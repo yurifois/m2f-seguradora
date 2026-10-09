@@ -4,6 +4,8 @@ import { SERVICES, SERVICE_PHOTO, STATS, type Service } from '../data/content';
 import { finePointer, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { SectionHeading } from '../components/SectionHeading';
 import { Icon } from '../components/Icon';
+import { ServiceArt } from '../components/ServiceArt';
+import '../styles/art.css';
 import { sendToForm } from '../lib/lead';
 import { selectQuoteTab } from './Quotes';
 
@@ -64,7 +66,7 @@ export function Services() {
           <SectionHeading
             id="servicos-title"
             align="left"
-            kicker="O que fazemos"
+            kicker="Nossos serviços"
             title={
               <>
                 Conquistar,<br /> <em>cuidar</em> e proteger.
@@ -120,10 +122,18 @@ function ServiceCard({ service: s }: { service: Service }) {
           <small>de juros</small>
         </span>
       ) : null}
-      <Icon name={s.icon} className="svc__icon" />
+      {s.size === 'tall' ? (
+        <Icon name={s.icon} className="svc__icon" />
+      ) : (
+        <div className="svc__art">
+          <ServiceArt id={s.id} />
+        </div>
+      )}
       <h3 className="svc__title">{s.title}</h3>
       <p className="svc__text">{s.text}</p>
-      <div className="svc__spacer" aria-hidden="true" />
+      <div className="svc__spacer" aria-hidden="true">
+        {s.size === 'tall' ? <ServiceArt id={s.id} /> : null}
+      </div>
       {s.steps ? (
         <ol className="svc__steps">
           {s.steps.map((st) => (
