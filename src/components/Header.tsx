@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { NAV } from '../data/content';
+import { FAQ_PATH } from '../data/faq';
 import { LogoMark } from './LogoMark';
 import { ScrollTrigger, lockScroll, scrollToSection } from '../lib/motion';
 
-export function Header() {
-  const [active, setActive] = useState<string>('inicio');
+export type Page = 'home' | 'faq';
+
+const FAQ_ID = 'duvidas';
+
+export function Header({ page = 'home' }: { page?: Page }) {
+  const home = page === 'home';
+  const [active, setActive] = useState<string>(home ? 'inicio' : FAQ_ID);
   const [open, setOpen] = useState(false);
   const [stuck, setStuck] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
@@ -13,16 +19,18 @@ export function Header() {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // seção ativa + barra de progresso
+  // seção ativa (só na página inicial) + barra de progresso
   useEffect(() => {
-    const triggers = NAV.map(({ id }) =>
-      ScrollTrigger.create({
-        trigger: `#${id}`,
-        start: 'top 45%',
-        end: 'bottom 45%',
-        onToggle: (self) => self.isActive && setActive(id),
-      }),
-    );
+    const triggers = home
+      ? NAV.map(({ id }) =>
+          ScrollTrigger.create({
+            trigger: `#${id}`,
+            start: 'top 45%',
+            end: 'bottom 45%',
+            onToggle: (self) => self.isActive && setActive(id),
+          }),
+        )
+      : [];
     const progress = ScrollTrigger.create({
       start: 0,
       end: 'max',
@@ -35,7 +43,7 @@ export function Header() {
       triggers.forEach((t) => t.kill());
       progress.kill();
     };
-  }, []);
+  }, [home]);
 
   // pílula deslizante atrás do link ativo
   useEffect(() => {
@@ -80,17 +88,23 @@ export function Header() {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
+  // na inicial, as seções rolam suave; na página de dúvidas, os links voltam para a inicial
+  const href = (id: string) => (home ? `#${id}` : `/#${id}`);
   const go = (id: string) => (e: React.MouseEvent) => {
-    e.preventDefault();
     setOpen(false);
     lockScroll(false);
+    if (!home) return;
+    e.preventDefault();
     scrollToSection(id);
   };
+
+  const links = [...NAV.map(({ id, label }) => ({ id, label, to: href(id), onClick: go(id) })),
+    { id: FAQ_ID, label: 'Dúvidas', to: FAQ_PATH, onClick: () => setOpen(false) }];
 
   return (
     <header className={`header${stuck ? ' is-stuck' : ''}${open ? ' is-open' : ''}`}>
       <div className="header__bar">
-        <a href="#inicio" className="header__brand" onClick={go('inicio')} aria-label="M2F Associados — início">
+        <a href={href('inicio')} className="header__brand" onClick={go('inicio')} aria-label="M2F Associados — início">
           <LogoMark className="header__logo" variant="gradient" />
           <span className="header__wordmark">Associados</span>
         </a>
@@ -98,14 +112,14 @@ export function Header() {
         <nav className="header__nav" aria-label="Seções do site">
           <span className="header__pill" ref={pillRef} aria-hidden="true" />
           <ul ref={navRef}>
-            {NAV.map(({ id, label }) => (
+            {links.map(({ id, label, to, onClick }) => (
               <li key={id}>
                 <a
-                  href={`#${id}`}
+                  href={to}
                   data-id={id}
                   className={active === id ? 'is-active' : undefined}
-                  aria-current={active === id ? 'location' : undefined}
-                  onClick={go(id)}
+                  aria-current={active === id ? (id === FAQ_ID ? 'page' : 'location') : undefined}
+                  onClick={onClick}
                 >
                   {label}
                 </a>
@@ -114,7 +128,7 @@ export function Header() {
           </ul>
         </nav>
 
-        <a href="#cotacoes" className="btn btn--primary btn--sm header__cta" onClick={go('cotacoes')}>
+        <a href={href('cotacoes')} className="btn btn--primary btn--sm header__cta" onClick={go('cotacoes')}>
           Simular agora
         </a>
 
@@ -135,9 +149,9 @@ export function Header() {
       <div className="header__panel" id="menu-mobile" ref={panelRef} inert={!open} aria-hidden={!open}>
         <nav aria-label="Menu">
           <ol>
-            {NAV.map(({ id, label }, i) => (
+            {links.map(({ id, label, to, onClick }, i) => (
               <li key={id} style={{ '--i': i } as React.CSSProperties}>
-                <a href={`#${id}`} onClick={go(id)} className={active === id ? 'is-active' : undefined}>
+                <a href={to} onClick={onClick} className={active === id ? 'is-active' : undefined}>
                   <span className="header__panel-num">0{i + 1}</span>
                   {label}
                 </a>
@@ -145,7 +159,7 @@ export function Header() {
             ))}
           </ol>
         </nav>
-        <a href="#cotacoes" className="btn btn--primary header__panel-cta" onClick={go('cotacoes')}>
+        <a href={href('cotacoes')} className="btn btn--primary header__panel-cta" onClick={go('cotacoes')}>
           Simular agora
         </a>
       </div>

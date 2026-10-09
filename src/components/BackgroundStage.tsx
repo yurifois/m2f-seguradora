@@ -15,12 +15,15 @@ function hasWebGL() {
  * Camadas fixas atrás do conteúdo, de trás para frente:
  * anéis da marca → aura → logo branca estática → logo 3D → fumaça → vinheta.
  */
-export function BackgroundStage() {
+export function BackgroundStage({ variant = 'hero' }: { variant?: 'hero' | 'static' }) {
   const anchorRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [mode, setMode] = useState<'loading' | 'webgl' | 'fallback'>('loading');
+  const [mode, setMode] = useState<'loading' | 'webgl' | 'fallback' | 'static'>(
+    variant === 'static' ? 'static' : 'loading',
+  );
 
   useEffect(() => {
+    if (variant === 'static') return; // páginas internas: só a logo escultural parada, sem 3D
     if (reducedMotion || !hasWebGL()) {
       setMode('fallback');
       return;
@@ -40,7 +43,7 @@ export function BackgroundStage() {
       cancelled = true;
       dispose?.();
     };
-  }, []);
+  }, [variant]);
 
   useEffect(() => {
     const onMove = (e: PointerEvent) => {

@@ -1,10 +1,12 @@
 import { CONTACT, NAV, waLink } from '../data/content';
+import { FAQ_PATH } from '../data/faq';
+import type { Page } from '../components/Header';
 import { LogoMark } from '../components/LogoMark';
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { reducedMotion, scrollToSection, scrubIn } from '../lib/motion';
 
-export function Footer() {
+export function Footer({ page = 'home' }: { page?: Page }) {
   const root = useRef<HTMLElement>(null);
   useGSAP(
     () => {
@@ -29,8 +31,9 @@ export function Footer() {
               {NAV.map(({ id, label }) => (
                 <li key={id}>
                   <a
-                    href={`#${id}`}
+                    href={page === 'home' ? `#${id}` : `/#${id}`}
                     onClick={(e) => {
+                      if (page !== 'home') return;
                       e.preventDefault();
                       scrollToSection(id);
                     }}
@@ -39,6 +42,9 @@ export function Footer() {
                   </a>
                 </li>
               ))}
+              <li>
+                <a href={FAQ_PATH}>Dúvidas frequentes</a>
+              </li>
             </ul>
           </nav>
           <div className="footer__col">

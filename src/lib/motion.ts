@@ -87,7 +87,7 @@ export function lockScroll(locked: boolean) {
  * Posição de destino de cada seção pelo menu. Seções fixadas (pin) recebem um
  * deslocamento para que o conteúdo já esteja montado quando a pessoa chegar.
  */
-export function scrollToSection(id: string) {
+export function scrollToSection(id: string, { immediate = false } = {}) {
   const el = document.getElementById(id);
   if (!el) return;
   const header = 64;
@@ -99,8 +99,8 @@ export function scrollToSection(id: string) {
     // seções de tela cheia já reservam o espaço do menu: param exatamente no topo
     y -= header;
   }
-  if (lenis) lenis.scrollTo(y, { duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });
-  else window.scrollTo({ top: y, behavior: reducedMotion ? 'auto' : 'smooth' });
+  if (lenis) lenis.scrollTo(y, immediate ? { immediate: true } : { duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });
+  else window.scrollTo({ top: y, behavior: reducedMotion || immediate ? 'auto' : 'smooth' });
   // foco acessível no destino, sem pular a rolagem
   window.setTimeout(() => {
     const heading = el.querySelector<HTMLElement>('h1, h2');

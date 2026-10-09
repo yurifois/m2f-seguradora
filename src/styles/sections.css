@@ -213,6 +213,9 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.about__faq {
+  justify-self: start;
+}
 .about__pillars {
   position: relative;
   padding-left: 28px;

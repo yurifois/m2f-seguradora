@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { waLink } from '../data/content';
 import { ScrollTrigger } from '../lib/motion';
 
-export function WhatsAppFab() {
-  const [show, setShow] = useState(false);
+export function WhatsAppFab({ alwaysOn = false }: { alwaysOn?: boolean }) {
+  const [show, setShow] = useState(alwaysOn);
   useEffect(() => {
+    if (alwaysOn) return;
     const st = ScrollTrigger.create({
       trigger: '#sobre',
       start: 'top 70%',
@@ -13,7 +14,7 @@ export function WhatsAppFab() {
       onToggle: (self) => setShow(self.isActive),
     });
     return () => st.kill();
-  }, []);
+  }, [alwaysOn]);
   return (
     <a
       className={`fab${show ? ' is-on' : ''}`}

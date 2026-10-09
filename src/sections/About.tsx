@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap, reducedMotion, scrubIn } from '../lib/motion';
+import { FAQ_PATH } from '../data/faq';
 
 const STATEMENT =
   'A M2F Associados é uma consultoria de consórcios e investimentos com sede em Brasília. Aqui você não compra uma cota e fica sozinho: um especialista acompanha cada passo — da escolha do crédito à contemplação — e decide com você o melhor destino para ele.';
@@ -62,7 +63,7 @@ export function About() {
           scrollTrigger: { trigger: '.about__pillars', start: 'top 90%', end: 'bottom 90%', scrub: 0.6 },
         },
       );
-      scrubIn('.about__trust', { start: 'top 98%', end: 'top 78%' });
+      scrubIn('.about__trust, .about__faq', { start: 'top 98%', end: 'top 80%', stagger: 0.1 });
     },
     { scope: root },
   );
@@ -97,6 +98,12 @@ export function About() {
               pelo Banco Central do Brasil.
             </span>
           </p>
+          <a className="btn btn--ghost about__faq" href={FAQ_PATH}>
+            Tire suas dúvidas sobre consórcio
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </a>
         </div>
 
         <div className="about__pillars">

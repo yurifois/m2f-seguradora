@@ -653,6 +653,19 @@ main > section {
   }
 }
 
+/* páginas internas: logo escultural estática e anéis discretos desde o início */
+.stage[data-logo-mode='static'] .stage__static-logo {
+  opacity: 0.12;
+}
+.stage[data-logo-mode='static'] .stage__rings {
+  opacity: 0.18;
+}
+.stage[data-logo-mode='static'] .ring {
+  stroke-dashoffset: 0;
+}
+.stage[data-logo-mode='static'] .stage__aura {
+  display: none;
+}
 .stage__logo3d {
   position: absolute;
   inset: 0;
