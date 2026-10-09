@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600">
+  <defs>
+    <filter id="vein" x="-15%" y="-15%" width="130%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency=".007 .018" numOctaves="3" seed="11" result="mineral"/>
+      <feDisplacementMap in="SourceGraphic" in2="mineral" scale="65" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation=".6"/>
+    </filter>
+    <filter id="stone">
+      <feTurbulence type="fractalNoise" baseFrequency=".44" numOctaves="2" seed="5" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 .45 0 0 0 0 .44 0 0 0 0 .4 0 0 0 .035 0"/>
+    </filter>
+    <linearGradient id="ivory" x2="1" y2="1">
+      <stop stop-color="#fffefb"/>
+      <stop offset=".55" stop-color="#faf8f3"/>
+      <stop offset="1" stop-color="#f4efe6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1600" fill="url(#ivory)"/>
+  <g fill="none" stroke="#c8c6bd" stroke-opacity=".18" filter="url(#vein)">
+    <path stroke-width="2" d="M-120 118C142 133 60 270 265 306S354 515 452 550s158 50 176 242 105 190 180 290 242 214 210 413 204 36 322 245"/>
+    <path stroke-width="1.5" d="M200-90c112 160 274 153 255 320s178 171 167 317 98 138 225 166 82 235 228 269 265 83 440 313"/>
+    <path stroke-width="2.5" d="M1190-60c-161 176-19 285-180 441s-142 201-4 331 21 186-125 211-116 205 15 263 176 202 119 447"/>
+    <path stroke-width="1" d="M265 306c-80 48-68 130-18 184s-69 212-191 227M622 547c72-42 196-129 245-33s171 89 220 35M808 1082c-74-70-264-38-251 77s-177 178-250 225M1006 712c170-62 222 78 333 5s201 66 300 67"/>
+  </g>
+  <rect width="1600" height="1600" filter="url(#stone)" opacity=".5"/>
+</svg>

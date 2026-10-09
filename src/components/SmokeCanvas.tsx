@@ -79,13 +79,13 @@ void main() {
   dens *= mix(1.2, 0.6, uv.y);       // mais densa embaixo, rarefeita no alto
   dens *= 1.0 - 0.45 * exp(-md * md * 12.0);
 
-  vec3 cold = vec3(0.98, 0.98, 0.95);
-  vec3 vio  = vec3(0.72, 0.84, 0.83);
-  vec3 cy   = vec3(0.45, 0.76, 0.80);
+  vec3 cold = vec3(0.97, 0.99, 1.0);
+  vec3 vio  = vec3(0.50, 0.78, 0.82);
+  vec3 cy   = vec3(0.17, 0.64, 0.74);
   vec3 col = mix(vio, cold, smoothstep(0.45, 0.95, f));
   col = mix(col, cy, clamp(q.y * 0.6 + 0.3, 0.0, 1.0) * 0.3);
 
-  float alpha = clamp(dens * 0.55, 0.0, 0.5);
+  float alpha = clamp(dens * 1.45, 0.0, 0.58);
   gl_FragColor = vec4(col * alpha, alpha);
 }`;
 

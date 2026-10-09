@@ -107,10 +107,7 @@ function ServiceCard({ service: s }: { service: Service }) {
   };
   const quote = s.quoteTab;
   return (
-    <article className={`svc svc--${s.size}`} data-pillar={s.pillar} onPointerMove={onMove}>
-      <div className="svc__photo" aria-hidden="true">
-        <img src={SERVICE_PHOTO[s.id]} alt="" loading="lazy" decoding="async" />
-      </div>
+    <article className={`svc svc--${s.size}`} data-pillar={s.pillar} data-service={s.id} onPointerMove={onMove}>
       <div className="svc__top">
         <span className="svc__pillar">{s.pillar}</span>
         {s.isNew ? <span className="svc__new">Novo</span> : null}
@@ -121,10 +118,17 @@ function ServiceCard({ service: s }: { service: Service }) {
           <small>de juros</small>
         </span>
       ) : null}
-      {s.size === 'md' ? <ServiceArt id={s.id} /> : <Icon name={s.icon} className="svc__icon" />}
-      {s.size === 'xl' ? <ServiceArt id={s.id} /> : null}
+      <Icon name={s.icon} className="svc__icon" />
       <h3 className="svc__title">{s.title}</h3>
       <p className="svc__text">{s.text}</p>
+      <div className="svc__visual" aria-hidden="true">
+        <div className="svc__photo">
+          <img src={SERVICE_PHOTO[s.id]} alt="" loading="lazy" decoding="async" />
+        </div>
+        <div className="svc__art">
+          <ServiceArt id={s.id} />
+        </div>
+      </div>
       {s.steps ? (
         <ol className="svc__steps">
           {s.steps.map((st, i) => (
@@ -135,7 +139,6 @@ function ServiceCard({ service: s }: { service: Service }) {
           ))}
         </ol>
       ) : null}
-      {s.size === 'tall' ? <ServiceArt id={s.id} /> : null}
       <ul className="svc__tags">
         {s.tags.map((t) => (
           <li key={t}>{t}</li>

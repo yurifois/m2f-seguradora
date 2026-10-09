@@ -6,6 +6,7 @@ import '@fontsource-variable/manrope/wght.css';
 import './styles/base.css';
 import './styles/sections.css';
 import './styles/faq.css';
+import './styles/light-visual.css';
 import FaqApp from './pages/FaqApp';
 
 createRoot(document.getElementById('root')!).render(
