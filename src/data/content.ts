@@ -21,6 +21,7 @@ export const waLink = (text: string) =>
 
 export const NAV = [
   { id: 'inicio', label: 'Início' },
+  { id: 'sobre', label: 'Sobre' },
   { id: 'associados', label: 'Associados' },
   { id: 'servicos', label: 'Serviços' },
   { id: 'cotacoes', label: 'Cotações' },

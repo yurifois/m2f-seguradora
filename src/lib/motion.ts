@@ -95,7 +95,8 @@ export function scrollToSection(id: string) {
   const settle = parseFloat(el.dataset.navSettle ?? '0');
   if (settle > 0) {
     y += Math.max(0, el.offsetHeight - window.innerHeight) * settle;
-  } else if (id !== 'inicio') {
+  } else if (id !== 'inicio' && el.dataset.navFlush === undefined) {
+    // seções de tela cheia já reservam o espaço do menu: param exatamente no topo
     y -= header;
   }
   if (lenis) lenis.scrollTo(y, { duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });

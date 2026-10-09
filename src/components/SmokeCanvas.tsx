@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { reducedMotion, scene } from '../lib/motion';
 
-// Névoa em shader de tela cheia (fbm com domain warping), renderizada em baixa
-// resolução e esticada por CSS — fumaça é macia por natureza, então 35% da
-// resolução basta e custa quase nada de GPU.
+// Névoa em shader de tela cheia: ruído simplex (sem blocos, estável até em GPU de celular
+// com precisão média) + domain warping, renderizada em resolução adaptativa e esticada por CSS.
 const VERT = `attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }`;
 
 const FRAG = `
@@ -18,51 +17,76 @@ uniform float uScroll;
 uniform vec2 uMouse;
 uniform float uDensity;
 
-float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
-float noise(vec2 p){
-  vec2 i = floor(p), f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
-             mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+// simplex 2D (Ashima Arts / Stefan Gustavson, MIT)
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec3 permute(vec3 x) { return mod289(((x * 34.0) + 1.0) * x); }
+float snoise(vec2 v) {
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+  vec2 i = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod289(i);
+  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+  vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+  m = m * m;
+  m = m * m;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+  vec3 g;
+  g.x = a0.x * x0.x + h.x * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
 }
-float fbm(vec2 p){
-  float v = 0.0, a = 0.5;
-  mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
-  for (int i = 0; i < 5; i++) { v += a * noise(p); p = m * p; a *= 0.5; }
-  return v;
+float fbm(vec2 p) {
+  float v = 0.0, a = 0.55;
+  for (int i = 0; i < 4; i++) {
+    v += a * snoise(p);
+    p = p * 2.0 + vec2(17.1, 9.7);
+    a *= 0.48;
+  }
+  return v; // ~[-1, 1]
 }
-void main(){
+
+void main() {
   vec2 uv = gl_FragCoord.xy / uRes;
   float aspect = uRes.x / uRes.y;
-  vec2 p = vec2((uv.x - 0.5) * aspect, uv.y - 0.5) * 1.7;
-  float t = uTime * 0.045;
-  p.y -= uScroll * 0.55;             // a névoa acompanha a rolagem (parallax)
-  p.y -= t * 0.9;                    // e sobe devagar, como fumaça
+  vec2 p = vec2((uv.x - 0.5) * aspect, uv.y - 0.5);
+  float t = mod(uTime, 3000.0) * 0.035;
+  p.y -= uScroll * 0.3;              // acompanha a rolagem (parallax)
 
-  // o cursor empurra a fumaça
-  vec2 m = vec2((uMouse.x - 0.5) * aspect, 0.5 - uMouse.y) * 1.7;
-  m.y -= uScroll * 0.55 + t * 0.9;
+  // o cursor afasta a fumaça
+  vec2 m = vec2((uMouse.x - 0.5) * aspect, 0.5 - uMouse.y);
+  m.y -= uScroll * 0.3;
   vec2 dm = p - m;
   float md = length(dm);
-  p += normalize(dm + 1e-4) * 0.22 * exp(-md * md * 5.0);
+  p += normalize(dm + 1e-4) * 0.08 * exp(-md * md * 14.0);
 
-  vec2 q = vec2(fbm(p + vec2(0.0, t)), fbm(p + vec2(5.2, 1.3) - t * 0.7));
-  vec2 r = vec2(fbm(p + 3.2 * q + vec2(1.7, 9.2) + t * 1.15), fbm(p + 3.2 * q + vec2(8.3, 2.8) - t));
-  float f = fbm(p + 2.6 * r);
+  // nuvens grandes e macias que sobem e se retorcem devagar
+  vec2 rise = vec2(0.0, t);
+  vec2 q = vec2(fbm(p * 0.9 - rise * 0.8), fbm(p * 0.9 + vec2(3.1, 7.4) - rise * 0.6));
+  float f = fbm(p * 1.35 + q * 0.85 - rise * 1.2 + vec2(t * 0.12, 0.0)) * 0.5 + 0.5;
+  float billow = smoothstep(0.36, 0.95, f);
+  billow = pow(billow, 1.35);
+  float haze = fbm(p * 0.45 - rise * 0.4 + vec2(9.0, 1.0)) * 0.5 + 0.5;
 
-  float wisps = smoothstep(0.38, 0.92, f);
-  float dens = wisps * uDensity;
-  dens *= mix(1.15, 0.7, uv.y);      // mais densa embaixo
-  dens *= 1.0 - 0.45 * exp(-md * md * 6.0);
+  float dens = (billow * 0.9 + haze * haze * 0.3) * uDensity;
+  dens *= mix(1.2, 0.6, uv.y);       // mais densa embaixo, rarefeita no alto
+  dens *= 1.0 - 0.45 * exp(-md * md * 12.0);
 
-  vec3 cold = vec3(0.70, 0.76, 1.0);
-  vec3 vio  = vec3(0.40, 0.41, 0.93);
-  vec3 cy   = vec3(0.0, 0.62, 0.96);
-  vec3 col = mix(vio, cold, clamp(r.x * 1.2, 0.0, 1.0));
-  col = mix(col, cy, clamp(q.y * q.y, 0.0, 1.0) * 0.55);
+  vec3 cold = vec3(0.80, 0.85, 1.0);
+  vec3 vio  = vec3(0.47, 0.47, 0.96);
+  vec3 cy   = vec3(0.15, 0.66, 0.98);
+  vec3 col = mix(vio, cold, smoothstep(0.45, 0.95, f));
+  col = mix(col, cy, clamp(q.y * 0.6 + 0.3, 0.0, 1.0) * 0.3);
 
-  float a = clamp(dens * 0.62, 0.0, 0.62);
-  gl_FragColor = vec4(col * a, a);
+  float alpha = clamp(dens * 0.55, 0.0, 0.5);
+  gl_FragColor = vec4(col * alpha, alpha);
 }`;
 
 function compile(gl: WebGLRenderingContext, type: number, src: string) {
@@ -116,10 +140,14 @@ export function SmokeCanvas() {
       density: gl.getUniformLocation(prog, 'uDensity'),
     };
 
+    // resolução adaptativa: ~300 mil pixels no máximo (celular fica perto de 60% da tela,
+    // full HD perto de 38%) — nítido o bastante para fios finos e leve para qualquer GPU
     const resize = () => {
-      const scale = window.innerWidth < 700 ? 0.3 : 0.36;
-      canvas.width = Math.max(2, Math.round(window.innerWidth * scale));
-      canvas.height = Math.max(2, Math.round(window.innerHeight * scale));
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const scale = Math.min(0.6, Math.sqrt(300_000 / (w * h)));
+      canvas.width = Math.max(2, Math.round(w * scale));
+      canvas.height = Math.max(2, Math.round(h * scale));
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(u.res, canvas.width, canvas.height);
     };

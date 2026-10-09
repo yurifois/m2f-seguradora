@@ -168,10 +168,10 @@ export function Hero() {
           </a>
           <a
             className="btn btn--ghost"
-            href="#associados"
+            href="#sobre"
             onClick={(e) => {
               e.preventDefault();
-              scrollToSection('associados');
+              scrollToSection('sobre');
             }}
           >
             Conhecer a M2F

@@ -335,7 +335,7 @@ export function Contact() {
     v.produtos.some(isConsorcio) || v.produtos.includes('saude') || v.produtos.includes('viagem');
 
   return (
-    <section id="contato" className="contact" ref={root} aria-labelledby="contato-title">
+    <section id="contato" className="contact" ref={root} data-nav-flush aria-labelledby="contato-title">
       <div className="container contact__grid">
         <div className="contact__intro">
           <p className="kicker">

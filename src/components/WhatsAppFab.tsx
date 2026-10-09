@@ -6,7 +6,7 @@ export function WhatsAppFab() {
   const [show, setShow] = useState(false);
   useEffect(() => {
     const st = ScrollTrigger.create({
-      trigger: '#associados',
+      trigger: '#sobre',
       start: 'top 70%',
       endTrigger: 'html',
       end: 'bottom bottom',

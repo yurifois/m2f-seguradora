@@ -102,7 +102,7 @@ export function Quotes() {
   };
 
   return (
-    <section id="cotacoes" className="quotes" ref={root} aria-labelledby="cotacoes-title">
+    <section id="cotacoes" className="quotes" ref={root} data-nav-flush aria-labelledby="cotacoes-title">
       <div className="container">
         <SectionHeading
           id="cotacoes-title"

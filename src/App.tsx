@@ -3,6 +3,7 @@ import { BackgroundStage } from './components/BackgroundStage';
 import { Header } from './components/Header';
 import { WhatsAppFab } from './components/WhatsAppFab';
 import { Hero } from './sections/Hero';
+import { About } from './sections/About';
 import { Partners } from './sections/Partners';
 import { Services } from './sections/Services';
 import { Quotes } from './sections/Quotes';
@@ -30,6 +31,7 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <About />
         <Partners />
         <Services />
         <Quotes />
