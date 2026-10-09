@@ -1,7 +1,7 @@
 # M2F Associados — site
 
-Site em scrollytelling (React + GSAP ScrollTrigger + Lenis + Three.js), fundo escuro com
-névoa em WebGL, logo 3D extrudada a partir do logobrand e quatro atos: hero, associados,
+Site em scrollytelling (React + GSAP ScrollTrigger + Lenis + Three.js), fundo de mármore
+marfim com fumaça turquesa animada, logo 3D extrudada a partir do logobrand e quatro atos: hero, associados,
 serviços/cotações e formulário.
 
 ## Rodar
@@ -35,10 +35,23 @@ VITE_LEAD_ENDPOINT=https://seu-endpoint/leads
 - `src/sections/*` — Hero, Partners, Services, Quotes, Contact, Footer
 - `public/img` — logos e fotos otimizadas (WebP)
 
-Acessibilidade: navegação por teclado, contraste AA e `prefers-reduced-motion` (desliga
+Acessibilidade: navegação por teclado, textos com contraste reforçado e `prefers-reduced-motion` (desliga
 pin, fumaça animada e logo 3D, mantendo todo o conteúdo).
 
-## Créditos das fotos dos serviços
+## Referência visual clara
+
+A composição aprovada usa fotografias como fundo integral dos cards, com degradês
+claros sobre as áreas de texto. Os assets atuais estão em `public/img/editorial/`:
+oito fotografias, mármore marfim e fumaça turquesa com canal alfa. Foram gerados com
+o gerador de imagens integrado a partir da referência enviada pelo usuário e
+convertidos para WebP, preservando a transparência da fumaça.
+
+Prompts e destino dos assets: [docs/visual-reference.md](docs/visual-reference.md).
+Os efeitos GSAP de entrada e scroll permanecem ativos. O shader WebGL continua
+respondendo ao cursor e à rolagem; uma camada de faixas de fumaça se move sobre ele.
+Em `prefers-reduced-motion`, o fundo permanece visível e estático.
+
+## Créditos das fotografias anteriores
 
 Fotos de fundo dos cards em `public/img/servicos/`, do [Unsplash](https://unsplash.com/license)
 (licença gratuita para uso comercial, sem obrigação de crédito):

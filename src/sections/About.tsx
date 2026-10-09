@@ -35,7 +35,7 @@ export function About() {
       // As palavras acendem com o scroll, mas permanecem legíveis no fundo claro.
       gsap.fromTo(
         '.about__word',
-        { opacity: 0.86 },
+        { opacity: 0.94 },
         {
           opacity: 1,
           ease: 'none',

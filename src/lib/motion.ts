@@ -21,7 +21,7 @@ export const DESKTOP_MQ = '(min-width: 900px)';
 export const scene = {
   heroProgress: 0, // 0 → 1 enquanto o hero está fixado
   heroExit: 0, // 0 → 1 na troca da logo 3D pela logo branca estática
-  smokeDensity: 0.62,
+  smokeDensity: 0.82,
   scrollVelocity: 0,
   mouseX: 0.5,
   mouseY: 0.5,
@@ -38,9 +38,11 @@ export function scrubIn(
 ) {
   const list = gsap.utils.toArray<Element>(targets);
   if (!list.length) return null;
+  // Textos nunca precisam desaparecer para produzir a entrada por scroll.
+  const readable = list.every((el) => el.matches('.display, .kicker, .lead, .faq-item, .stats__item'));
   return gsap.fromTo(
     list,
-    { opacity: 0, y: opts.y ?? 40 },
+    { opacity: readable ? 0.72 : 0, y: opts.y ?? 40 },
     {
       opacity: 1,
       y: 0,

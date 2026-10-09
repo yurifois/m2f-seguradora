@@ -183,7 +183,7 @@ export function SmokeCanvas() {
       gl.uniform1f(u.time, 12);
       gl.uniform1f(u.scroll, 0);
       gl.uniform2f(u.mouse, -5, -5);
-      gl.uniform1f(u.density, 0.5);
+      gl.uniform1f(u.density, 0.7);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     } else {
       raf = requestAnimationFrame(frame);
