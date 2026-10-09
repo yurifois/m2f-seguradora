@@ -468,6 +468,38 @@
     box-shadow 0.4s var(--ease-out),
     translate 0.4s var(--ease-out);
 }
+/* foto real de fundo: apagada, escurecida e tingida com a cor do pilar para não competir com o texto */
+.svc__photo {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.svc__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.62;
+  filter: saturate(0.85) brightness(0.92);
+  transform: scale(1.04);
+  transition:
+    transform 1.4s var(--ease-out),
+    opacity 0.6s linear;
+}
+.svc__photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(6 8 18 / 0.22) 0%, rgb(6 8 18 / 0.58) 42%, rgb(6 8 18 / 0.9) 100%),
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 24%, transparent), transparent 62%);
+}
+.svc:hover .svc__photo img {
+  transform: scale(1.1);
+  opacity: 0.75;
+}
 .svc[data-pillar='Cuidar'] {
   --accent: var(--blue);
 }

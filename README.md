@@ -37,3 +37,21 @@ VITE_LEAD_ENDPOINT=https://seu-endpoint/leads
 
 Acessibilidade: navegação por teclado, contraste AA e `prefers-reduced-motion` (desliga
 pin, fumaça animada e logo 3D, mantendo todo o conteúdo).
+
+## Créditos das fotos dos serviços
+
+Fotos de fundo dos cards em `public/img/servicos/`, do [Unsplash](https://unsplash.com/license)
+(licença gratuita para uso comercial, sem obrigação de crédito):
+
+| Card | Foto |
+|---|---|
+| Consórcio de imóveis | `photo-1748063578185-3d68121b11ff` |
+| Consórcio de veículos | `photo-1609452200852-98c888654e2c` |
+| Investimento | `photo-1757705759617-ff88e68fe5af` |
+| Plano de saúde | `photo-1666887360921-85952a86894f` |
+| Seguro viagem | `photo-1729350038150-495c628bd695` |
+| Seguro de vida | `photo-1529180979161-06b8b6d6f2be` |
+| Seguro residencial | `photo-1570905810373-a8ae44f954cb` |
+| Seguro auto | `photo-1551464484-74a2f25d01a0` |
+
+Cada uma pode ser vista em `https://images.unsplash.com/<id>`.

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
-import { SERVICES, STATS, type Service } from '../data/content';
+import { SERVICES, SERVICE_PHOTO, STATS, type Service } from '../data/content';
 import { finePointer, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { SectionHeading } from '../components/SectionHeading';
 import { Icon } from '../components/Icon';
@@ -108,6 +108,9 @@ function ServiceCard({ service: s }: { service: Service }) {
   const quote = s.quoteTab;
   return (
     <article className={`svc svc--${s.size}`} data-pillar={s.pillar} onPointerMove={onMove}>
+      <div className="svc__photo" aria-hidden="true">
+        <img src={SERVICE_PHOTO[s.id]} alt="" loading="lazy" decoding="async" />
+      </div>
       <div className="svc__top">
         <span className="svc__pillar">{s.pillar}</span>
         {s.isNew ? <span className="svc__new">Novo</span> : null}

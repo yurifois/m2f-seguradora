@@ -183,6 +183,18 @@ export const SERVICES: Service[] = [
 
 export type QuoteTab = 'imovel' | 'veiculo' | 'saude' | 'viagem' | 'vida';
 
+// Fotos reais de fundo dos cards (Unsplash, licença gratuita para uso comercial — ver README)
+export const SERVICE_PHOTO: Record<ProductId, string> = {
+  'consorcio-imovel': '/img/servicos/imovel.webp',
+  'consorcio-veiculo': '/img/servicos/veiculo.webp',
+  'consorcio-investimento': '/img/servicos/investimento.webp',
+  saude: '/img/servicos/saude.webp',
+  viagem: '/img/servicos/viagem.webp',
+  vida: '/img/servicos/vida.webp',
+  residencial: '/img/servicos/residencial.webp',
+  auto: '/img/servicos/auto.webp',
+};
+
 export const QUOTE_TABS: { id: QuoteTab; label: string; short: string }[] = [
   { id: 'imovel', label: 'Consórcio de imóvel', short: 'Imóvel' },
   { id: 'veiculo', label: 'Consórcio de veículo', short: 'Veículo' },
