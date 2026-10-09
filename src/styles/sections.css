@@ -462,36 +462,6 @@
   font-size: 1.1rem;
   color: #9fb4ff;
 }
-.svc__pulse {
-  width: 100%;
-  height: auto;
-  margin: auto 0;
-  overflow: visible;
-}
-.svc__pulse-base {
-  fill: none;
-  stroke: rgb(255 255 255 / 0.12);
-  stroke-width: 1.2;
-  stroke-linejoin: round;
-}
-.svc__pulse-run {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  stroke-dasharray: 0.32 0.68;
-  filter: drop-shadow(0 0 6px var(--accent));
-  animation: pulse-run 2.8s linear infinite;
-}
-@keyframes pulse-run {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
 .svc--tall .svc__tags {
   margin-top: 8px;
 }
@@ -1094,9 +1064,6 @@
   stroke: rgb(150 175 255 / 0.45);
   stroke-width: 1;
   stroke-linejoin: round;
-}
-.contact.is-assembled .shards {
-  display: none;
 }
 .contact__panel {
   position: relative;

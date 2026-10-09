@@ -28,6 +28,34 @@ export const scene = {
   heroVisible: true,
 };
 
+/**
+ * Entrada amarrada à rolagem: descendo, o elemento aparece; subindo, ele sai do mesmo jeito.
+ * O gatilho é o próprio elemento (ou o primeiro da lista), então funciona dentro de cenas fixadas.
+ */
+export function scrubIn(
+  targets: gsap.TweenTarget,
+  opts: { trigger?: gsap.DOMTarget; start?: string; end?: string; y?: number; stagger?: number } = {},
+) {
+  const list = gsap.utils.toArray<Element>(targets);
+  if (!list.length) return null;
+  return gsap.fromTo(
+    list,
+    { opacity: 0, y: opts.y ?? 40 },
+    {
+      opacity: 1,
+      y: 0,
+      ease: 'power2.out',
+      stagger: opts.stagger ?? 0.12,
+      scrollTrigger: {
+        trigger: opts.trigger ?? list[0],
+        start: opts.start ?? 'top 95%',
+        end: opts.end ?? 'top 60%',
+        scrub: 0.6,
+      },
+    },
+  );
+}
+
 let lenis: Lenis | null = null;
 
 export function initSmoothScroll() {

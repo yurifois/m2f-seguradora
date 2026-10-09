@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { PARTNERS } from '../data/content';
-import { DESKTOP_MQ, gsap, reducedMotion } from '../lib/motion';
+import { DESKTOP_MQ, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { SectionHeading } from '../components/SectionHeading';
 
 type Metrics = { startX: number; startY: number; arc: number };
@@ -100,14 +100,7 @@ export function Partners() {
         return () => cards.forEach((c) => (c.style.cssText = ''));
       });
 
-      gsap.from('.partners .section-heading > *', {
-        opacity: 0,
-        y: 40,
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: root.current, start: 'top 75%' },
-      });
+      scrubIn('.partners .section-heading > *', { start: 'top 98%', end: 'top 55%' });
       return () => mm.revert();
     },
     { scope: root },

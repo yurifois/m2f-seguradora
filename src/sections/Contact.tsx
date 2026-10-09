@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { CONTACT, PRODUCT_LABEL, waLink, type ProductId } from '../data/content';
-import { gsap, reducedMotion } from '../lib/motion';
+import { getLenis, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { onLeadDraft } from '../lib/lead';
 
 /* ---------- fragmentos: triângulos de uma malha irregular que montam o painel ---------- */
@@ -219,21 +219,8 @@ export function Contact() {
 
   useGSAP(
     () => {
-      const finish = () => {
-        root.current?.classList.add('is-assembled');
-      };
-      if (reducedMotion) {
-        finish();
-        return;
-      }
-      gsap.from('.contact__intro > *', {
-        opacity: 0,
-        y: 40,
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: root.current, start: 'top 80%' },
-      });
+      if (reducedMotion) return;
+      scrubIn('.contact__intro > *', { start: 'top 98%', end: 'top 50%', stagger: 0.08 });
 
       const pieces = gsap.utils.toArray<HTMLElement>('.shard');
       gsap.set('.contact__panel', { opacity: 0 });
@@ -248,12 +235,6 @@ export function Contact() {
           start: 'top 100%',
           end: 'top 35%',
           scrub: 0.7,
-          // monta uma vez só: depois de pronto, o formulário não se desfaz ao rolar de volta
-          onLeave: (self) => {
-            self.kill();
-            tl.progress(1);
-            finish();
-          },
         },
       });
       tl.fromTo(
@@ -290,13 +271,13 @@ export function Contact() {
     { scope: root },
   );
 
-  // quem chega pelo teclado (ou já começa a digitar) não espera a animação
+  // quem chega pelo teclado não espera a animação: rola até o ponto em que o painel está montado
   const onFocusIn = () => {
-    const tl = tlRef.current;
-    if (!tl || root.current?.classList.contains('is-assembled')) return;
-    tl.scrollTrigger?.kill();
-    tl.progress(1);
-    root.current?.classList.add('is-assembled');
+    const st = tlRef.current?.scrollTrigger;
+    if (!st || st.progress >= 1) return;
+    const lenis = getLenis();
+    if (lenis) lenis.scrollTo(st.end + 2, { immediate: true });
+    else window.scrollTo(0, st.end + 2);
   };
 
   const next = () => {

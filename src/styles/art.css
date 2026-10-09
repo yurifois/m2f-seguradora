@@ -1,0 +1,440 @@
+/* ==========================================================================
+   Ilustrações animadas dos serviços — rodam o tempo todo enquanto a grade está na tela.
+   Regra: o estilo-base é o estado visível e completo; os keyframes partem dele.
+   ========================================================================== */
+
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  color: var(--accent);
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.art-line,
+.art-wheel,
+.art-speed line {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: none;
+}
+.art-thin {
+  stroke-width: 1;
+  opacity: 0.55;
+}
+.art-faint {
+  stroke: rgb(255 255 255 / 0.14);
+  stroke-width: 1.2;
+}
+.art-dash {
+  stroke-dasharray: 3 6;
+}
+/* grade fora da tela: pausa tudo */
+.services__grid:not(.is-live) .art * {
+  animation-play-state: paused !important;
+}
+
+/* ---------- consórcio de imóveis: casa e prédio se desenhando, janelas acendendo ---------- */
+.art--imovel .art-draw {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: art-build 7s var(--ease-io) infinite;
+  animation-delay: calc(var(--d) * 0.35s);
+}
+@keyframes art-build {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  38%,
+  86% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.art--imovel .art-win {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0.85;
+  animation: art-light 7s linear infinite;
+  animation-delay: calc(var(--d) * 0.18s);
+}
+@keyframes art-light {
+  0%,
+  42% {
+    opacity: 0.06;
+  }
+  50%,
+  84% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0.06;
+  }
+}
+
+/* ---------- consórcio de veículos: carro rodando, estrada passando ---------- */
+.art-road {
+  stroke: rgb(255 255 255 / 0.35);
+  stroke-width: 1.6;
+  stroke-dasharray: 14 10;
+  animation: art-road 0.55s linear infinite;
+}
+@keyframes art-road {
+  to {
+    stroke-dashoffset: 24;
+  }
+}
+.art-car {
+  animation: art-bob 0.36s ease-in-out infinite alternate;
+}
+@keyframes art-bob {
+  to {
+    transform: translateY(-1.2px);
+  }
+}
+.art-wheel {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-spin 0.5s linear infinite;
+}
+@keyframes art-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.art-speed line {
+  stroke-width: 1.2;
+  opacity: 0.6;
+  animation: art-speed 0.9s linear infinite;
+  animation-delay: calc(var(--d) * -0.3s);
+}
+@keyframes art-speed {
+  0% {
+    transform: translateX(26px);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(-26px);
+    opacity: 0;
+  }
+}
+.art-beam {
+  stroke: none;
+  animation: art-flicker 2.6s ease-in-out infinite;
+}
+@keyframes art-flicker {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- investimento: barras crescendo, linha de alta ---------- */
+.art-bar {
+  fill: color-mix(in srgb, currentColor 22%, transparent);
+  stroke: currentColor;
+  stroke-width: 1.2;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: art-grow 4.2s var(--ease-io) infinite;
+  animation-delay: calc(var(--d) * 0.14s);
+}
+@keyframes art-grow {
+  0% {
+    transform: scaleY(0.25);
+  }
+  45%,
+  82% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0.25);
+  }
+}
+.art-trend {
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: art-trend 4.2s var(--ease-io) infinite;
+}
+@keyframes art-trend {
+  0%,
+  20% {
+    stroke-dashoffset: 1;
+  }
+  55%,
+  85% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1;
+  }
+}
+.art-arrow {
+  stroke: #fff;
+  animation: art-fade 4.2s var(--ease-io) infinite;
+}
+.art-dot {
+  fill: #fff;
+  stroke: currentColor;
+  stroke-width: 6;
+  stroke-opacity: 0.3;
+  animation: art-fade 4.2s var(--ease-io) infinite;
+}
+@keyframes art-fade {
+  0%,
+  45% {
+    opacity: 0;
+  }
+  58%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- plano de saúde: eletrocardiograma ---------- */
+.art-pulse-base {
+  stroke: rgb(255 255 255 / 0.12);
+  stroke-width: 1.2;
+}
+.art-pulse-run {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-dasharray: 0.32 0.68;
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: art-pulse 2.8s linear infinite;
+}
+@keyframes art-pulse {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- seguro viagem: globo girando, avião dando a volta ---------- */
+.art-globe {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: color-mix(in srgb, currentColor 10%, transparent);
+}
+.art-meridian {
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.6;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-meridian 6s ease-in-out infinite;
+  animation-delay: calc(var(--d) * -2s);
+}
+@keyframes art-meridian {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(-1);
+  }
+}
+.art-orbit {
+  transform-box: view-box;
+  transform-origin: 120px 55px;
+  animation: art-spin 7s linear infinite;
+}
+.art-plane {
+  fill: #fff;
+  stroke: none;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+.art-trail {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-dasharray: 2 4;
+  opacity: 0.8;
+}
+
+/* ---------- seguro de vida: escudo, coração batendo, ondas de proteção ---------- */
+.art-ripple {
+  stroke: currentColor;
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-ripple 3s ease-out infinite;
+  animation-delay: calc(var(--d) * 1s);
+}
+@keyframes art-ripple {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+.art-shield {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: color-mix(in srgb, currentColor 14%, #04050a);
+}
+.art-heart {
+  fill: currentColor;
+  stroke: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: art-beat 1.3s ease-in-out infinite;
+}
+@keyframes art-beat {
+  0%,
+  40%,
+  100% {
+    transform: scale(1);
+  }
+  12% {
+    transform: scale(1.2);
+  }
+  26% {
+    transform: scale(1.1);
+  }
+}
+
+/* ---------- seguro residencial: chuva, guarda-chuva protegendo a casa ---------- */
+.art-drop {
+  stroke: #9fd6ff;
+  stroke-width: 1.4;
+  opacity: 0;
+  animation: art-rain 1.1s linear infinite;
+  animation-delay: calc(var(--d) * -0.12s);
+}
+@keyframes art-rain {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(var(--fall));
+    opacity: 0;
+  }
+}
+.art-canopy {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: color-mix(in srgb, currentColor 18%, transparent);
+}
+.art-umbrella {
+  transform-box: view-box;
+  transform-origin: 120px 46px;
+  animation: art-sway 3.2s ease-in-out infinite alternate;
+}
+@keyframes art-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+
+/* ---------- seguro auto: vistoria passando, escudo acendendo ---------- */
+.art-scan {
+  stroke: none;
+  animation: art-scan 2.6s var(--ease-io) infinite alternate;
+}
+@keyframes art-scan {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(96px);
+  }
+}
+.art-badge {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-badge 2.6s ease-in-out infinite alternate;
+}
+@keyframes art-badge {
+  0%,
+  60% {
+    opacity: 0.35;
+    transform: scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+}
+.art-check {
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: art-check 2.6s ease-in-out infinite alternate;
+}
+@keyframes art-check {
+  0%,
+  60% {
+    stroke-dashoffset: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- encaixe nos cards ---------- */
+.svc .art {
+  margin: 2px 0 4px;
+  max-height: 96px;
+}
+.svc--tall .art {
+  margin: auto 0;
+  max-height: none;
+}
+.svc--xl .art {
+  position: absolute;
+  right: clamp(18px, 2.4vw, 36px);
+  bottom: clamp(56px, 7vw, 76px);
+  width: min(40%, 300px);
+  max-height: none;
+  margin: 0;
+  pointer-events: none;
+}
+.svc--xl .svc__steps {
+  max-width: min(420px, 56%);
+}
+@media (max-width: 620px) {
+  .svc--xl .art {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: min(100%, 300px);
+    margin: 8px auto 0;
+  }
+  .svc--xl .svc__steps {
+    max-width: none;
+  }
+}

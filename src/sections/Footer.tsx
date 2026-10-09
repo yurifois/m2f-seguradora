@@ -1,10 +1,20 @@
 import { CONTACT, NAV, waLink } from '../data/content';
 import { LogoMark } from '../components/LogoMark';
-import { scrollToSection } from '../lib/motion';
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { reducedMotion, scrollToSection, scrubIn } from '../lib/motion';
 
 export function Footer() {
+  const root = useRef<HTMLElement>(null);
+  useGSAP(
+    () => {
+      if (reducedMotion) return;
+      scrubIn('.footer__top > *', { start: 'top 100%', end: 'top 70%', stagger: 0.08 });
+    },
+    { scope: root },
+  );
   return (
-    <footer className="footer">
+    <footer className="footer" ref={root}>
       <div className="container">
         <div className="footer__top">
           <div className="footer__brand">

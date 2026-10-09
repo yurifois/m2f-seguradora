@@ -8,7 +8,7 @@ import {
   type ProductId,
   type QuoteTab,
 } from '../data/content';
-import { gsap, reducedMotion, scrollToSection } from '../lib/motion';
+import { gsap, reducedMotion, scrollToSection, scrubIn } from '../lib/motion';
 import { brl, compactBrl, sendToForm } from '../lib/lead';
 import { SectionHeading } from '../components/SectionHeading';
 import { Icon } from '../components/Icon';
@@ -70,14 +70,7 @@ export function Quotes() {
   useGSAP(
     () => {
       if (reducedMotion) return;
-      gsap.from('.quotes .section-heading > *', {
-        opacity: 0,
-        y: 40,
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: root.current, start: 'top 82%' },
-      });
+      scrubIn('.quotes .section-heading > *');
       gsap.fromTo(
         '.quotes__panel',
         { opacity: 0, y: 160, z: -420, rotateX: 34, scale: 0.92 },

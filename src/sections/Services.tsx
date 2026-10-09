@@ -1,26 +1,34 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { SERVICES, STATS, type Service } from '../data/content';
-import { finePointer, gsap, reducedMotion } from '../lib/motion';
+import { finePointer, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { SectionHeading } from '../components/SectionHeading';
 import { Icon } from '../components/Icon';
+import { ServiceArt } from '../components/ServiceArt';
+import '../styles/art.css';
 import { sendToForm } from '../lib/lead';
 import { selectQuoteTab } from './Quotes';
 
 export function Services() {
   const root = useRef<HTMLElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // as ilustrações só animam enquanto a grade está visível
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const io = new IntersectionObserver(([e]) => grid.classList.toggle('is-live', e.isIntersecting), {
+      rootMargin: '100px 0px',
+    });
+    io.observe(grid);
+    return () => io.disconnect();
+  }, []);
 
   useGSAP(
     () => {
       if (reducedMotion) return;
-      gsap.from('.services .section-heading > *', {
-        opacity: 0,
-        y: 40,
-        duration: 0.9,
-        ease: 'power3.out',
-        stagger: 0.08,
-        scrollTrigger: { trigger: root.current, start: 'top 82%' },
-      });
+      scrubIn('.services .section-heading > *');
+      scrubIn('.stats__item', { start: 'top 98%', end: 'top 70%' });
       // todos os serviços chegam do fundo até a metade da rolagem da seção
       gsap.fromTo(
         '.svc',
@@ -36,16 +44,15 @@ export function Services() {
           scrollTrigger: { trigger: '.services__grid', start: 'top 95%', end: 'top 40%', scrub: 0.6 },
         },
       );
-      // números que sobem
+      // números que sobem descendo e voltam a zero subindo
       gsap.utils.toArray<HTMLElement>('[data-count]').forEach((el) => {
         const end = Number(el.dataset.count);
         const obj = { v: 0 };
         gsap.to(obj, {
           v: end,
-          duration: 1.6,
-          ease: 'power3.out',
+          ease: 'power2.out',
           onUpdate: () => (el.textContent = Math.round(obj.v).toLocaleString('pt-BR')),
-          scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+          scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 62%', scrub: 0.6 },
         });
       });
     },
@@ -81,7 +88,7 @@ export function Services() {
           </dl>
         </div>
 
-        <div className="services__grid">
+        <div className="services__grid" ref={gridRef}>
           {SERVICES.map((s) => (
             <ServiceCard key={s.id} service={s} />
           ))}
@@ -111,7 +118,8 @@ function ServiceCard({ service: s }: { service: Service }) {
           <small>de juros</small>
         </span>
       ) : null}
-      <Icon name={s.icon} className="svc__icon" />
+      {s.size === 'md' ? <ServiceArt id={s.id} /> : <Icon name={s.icon} className="svc__icon" />}
+      {s.size === 'xl' ? <ServiceArt id={s.id} /> : null}
       <h3 className="svc__title">{s.title}</h3>
       <p className="svc__text">{s.text}</p>
       {s.steps ? (
@@ -124,12 +132,7 @@ function ServiceCard({ service: s }: { service: Service }) {
           ))}
         </ol>
       ) : null}
-      {s.size === 'tall' ? (
-        <svg className="svc__pulse" viewBox="0 0 240 60" aria-hidden="true">
-          <path className="svc__pulse-base" d="M0 34h70l10-16 14 34 14-46 12 40 8-12h112" />
-          <path className="svc__pulse-run" d="M0 34h70l10-16 14 34 14-46 12 40 8-12h112" pathLength="1" />
-        </svg>
-      ) : null}
+      {s.size === 'tall' ? <ServiceArt id={s.id} /> : null}
       <ul className="svc__tags">
         {s.tags.map((t) => (
           <li key={t}>{t}</li>
