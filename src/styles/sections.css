@@ -6,7 +6,7 @@
 
 .hero {
   position: relative;
-  height: 330svh;
+  height: 400svh;
 }
 .hero__pin {
   position: sticky;
@@ -134,7 +134,7 @@
 }
 @media (max-width: 700px) {
   .hero {
-    height: 290svh;
+    height: 360svh;
   }
   .hero__name {
     letter-spacing: 0.16em;

@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger, getLenis, gsap, reducedMotion, scene, scrollToSection } from '../lib/motion';
-import { renderChart } from '../components/HeroScene';
+import { CAR_BOX, renderChart, renderHealth, renderPlane } from '../components/HeroScene';
+import { createDust, type Dust } from '../components/dustEffect';
 
 const NAME = 'M2F Associados';
 
@@ -26,8 +27,11 @@ export function Hero() {
       const house = document.querySelector<HTMLElement>('.scene__house');
       const car = document.querySelector<HTMLElement>('.scene__carro');
       const chart = document.querySelector<SVGSVGElement>('.scene__chart');
+      const health = document.querySelector<SVGSVGElement>('.scene__health');
+      const sky = document.querySelector<SVGSVGElement>('.scene__sky');
       if (reducedMotion) {
         if (chart) renderChart(chart, 1);
+        if (health) renderHealth(health, 1);
         // sem animação: só troca a logo do fundo depois do hero
         const stageEl = document.querySelector('.stage');
         ScrollTrigger.create({
@@ -75,27 +79,53 @@ export function Hero() {
       const out3 = (t: number) => 1 - Math.pow(1 - t, 3);
       const state = { p: 0 };
 
+      // casa + carro viram poeira (WebGL2); sem suporte, só esmaecem
+      const dustCanvas = document.querySelector<HTMLCanvasElement>('.scene__dust');
+      const casaImg = document.querySelector<HTMLImageElement>('.scene__casa');
+      let dust: Dust | null = null;
+      if (dustCanvas && house && casaImg && car) {
+        dust = createDust(dustCanvas, house, casaImg, car as HTMLImageElement, CAR_BOX);
+      }
+
       // Estado do hero é função pura do progresso: ida e volta da rolagem sempre batem.
-      // Ordem: casa → carro estacionando no mesmo lugar → gráfico crescendo → nome, chamada e botões.
+      // Ordem: casa → carro estaciona → os dois viram poeira → gráfico sobe num canto, estetoscópio
+      // e batimento no outro, avião cruza o topo → nome, chamada e botões.
       const render = () => {
         const p = state.p;
+        const u = clamp((p - 0.27) / 0.17); // poeira
         if (house) {
-          const h = out3(clamp(p / 0.2));
-          house.style.opacity = String(h);
+          const h = out3(clamp(p / 0.12));
+          const fx = dust?.ready ? (u > 0 ? 0 : 1) : 1 - u;
+          house.style.opacity = String(h * fx);
           house.style.transform = `translate3d(0, ${(7 * (1 - h)).toFixed(2)}%, 0) scale(${(1.07 - 0.07 * h).toFixed(4)})`;
           house.style.filter = h > 0.99 ? 'none' : `blur(${(8 * (1 - h)).toFixed(2)}px)`;
         }
         if (car) {
-          const c = clamp((p - 0.2) / 0.2);
+          const c = clamp((p - 0.11) / 0.12);
           const e = out3(c);
           car.style.opacity = String(clamp(c * 3));
           car.style.transform = `translate3d(${(55 * (1 - e)).toFixed(2)}%, ${(-16 * (1 - e)).toFixed(2)}%, 0) scale(${(0.8 + 0.2 * e).toFixed(4)})`;
         }
-        if (chart) renderChart(chart, clamp((p - 0.38) / 0.24));
+        dust?.render(u);
+        if (chart) {
+          const tc = clamp((p - 0.37) / 0.19);
+          const r = out3(clamp(tc / 0.35));
+          chart.style.opacity = String(r);
+          chart.style.transform = `translate3d(0, ${(60 * (1 - r)).toFixed(1)}px, 0)`;
+          renderChart(chart, tc);
+        }
+        if (health) {
+          const th = clamp((p - 0.42) / 0.21);
+          const r = out3(clamp(th / 0.3));
+          health.style.opacity = String(r);
+          health.style.transform = `translate3d(0, ${(60 * (1 - r)).toFixed(1)}px, 0)`;
+          renderHealth(health, th);
+        }
+        if (sky) renderPlane(sky, clamp((p - 0.36) / 0.3));
 
         // texto: a mesma entrada de antes, comprimida no trecho final
-        const q = clamp((p - 0.6) / 0.24) * 0.56;
-        veil.style.opacity = String(out2(clamp((p - 0.58) / 0.14)));
+        const q = clamp((p - 0.64) / 0.22) * 0.56;
+        veil.style.opacity = String(out2(clamp((p - 0.62) / 0.14)));
         const e = out2(clamp(q / 0.42));
         gsap.set(nameEl, { y: toLogo * (1 - e), scale: 2.3 - 1.3 * e });
         chars.forEach((c, i) => {
@@ -144,7 +174,7 @@ export function Hero() {
           defaults: { ease: 'none' },
           scrollTrigger: {
             trigger: root.current,
-            start: () => `top+=${(el.offsetHeight - vh()) * 0.88} top`,
+            start: () => `top+=${(el.offsetHeight - vh()) * 0.9} top`,
             end: () => `bottom top+=${vh() * 0.45}`,
             scrub: 0.5,
             invalidateOnRefresh: true,
@@ -159,6 +189,8 @@ export function Hero() {
         .to($('.stage__aura'), { opacity: 0, duration: 0.8 }, 0)
         .to($('.stage__logo-fallback'), { opacity: 0, duration: 0.6 }, 0.4)
         .to($('.stage__static-logo'), { opacity: 0.045, scale: 1, duration: 0.55, ease: 'power1.out' }, 0.45);
+
+      return () => dust?.dispose();
     },
     { scope: root },
   );
