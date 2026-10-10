@@ -53,6 +53,7 @@ export function Hero() {
       const rule = el.querySelector<HTMLElement>('.hero__rule')!;
       const reveals = [...el.querySelectorAll<HTMLElement>('.hero__reveal')];
       const cue = el.querySelector<HTMLElement>('.hero__cue')!;
+      const veil = el.querySelector<HTMLElement>('.hero__veil')!;
 
       // ordem de entrada das letras: do centro para as pontas
       const mid = (chars.length - 1) / 2;
@@ -94,6 +95,7 @@ export function Hero() {
 
         // texto: a mesma entrada de antes, comprimida no trecho final
         const q = clamp((p - 0.6) / 0.24) * 0.56;
+        veil.style.opacity = String(out2(clamp((p - 0.58) / 0.14)));
         const e = out2(clamp(q / 0.42));
         gsap.set(nameEl, { y: toLogo * (1 - e), scale: 2.3 - 1.3 * e });
         chars.forEach((c, i) => {
@@ -165,6 +167,7 @@ export function Hero() {
     <section id="inicio" className="hero" ref={root} aria-label="Apresentação">
       <div className="hero__pin">
         <div className="hero__logo-space" aria-hidden="true" />
+        <div className="hero__veil" aria-hidden="true" />
         <h1 className="hero__name">
           <span className="sr-only">M2F Associados — consórcios, saúde e seguros</span>
           <span className="hero__name-inner" aria-hidden="true">
