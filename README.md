@@ -30,6 +30,8 @@ VITE_LEAD_ENDPOINT=https://seu-endpoint/leads
 ## Estrutura
 
 - `src/components/BackgroundStage.tsx` — camadas fixas: anéis da marca, logo 3D, logo branca estática, fumaça
+- `src/components/HeroScene.tsx` — cena do hero entre a fumaça e a logo 3D: casa (`public/img/hero/casa.webp`), carro
+  (`carro.webp`, recortado e alinhado à casa) e o gráfico de vidro em SVG que cresce com a rolagem
 - `src/components/logo3dScene.ts` — cena Three.js (carregada sob demanda)
 - `src/components/SmokeCanvas.tsx` — shader da névoa
 - `src/sections/*` — Hero, Partners, Services, Quotes, Contact, Footer

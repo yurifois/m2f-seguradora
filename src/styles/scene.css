@@ -1,0 +1,79 @@
+/* Cena do hero: casa + carro à direita, gráfico de vidro à esquerda, atrás da logo 3D e acima da fumaça */
+
+.scene {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.scene__house {
+  --w: min(66vw, 1240px, calc(66svh * 2.152));
+  position: absolute;
+  right: -2vw;
+  top: var(--logo-cy);
+  width: var(--w);
+  aspect-ratio: 1840 / 855;
+  translate: 0 -44%;
+  will-change: transform, opacity;
+}
+.scene__casa {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* o piso se dissolve no mármore em vez de terminar no recorte */
+  -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 97%);
+  mask-image: linear-gradient(180deg, #000 68%, transparent 97%);
+}
+.scene__carro {
+  position: absolute;
+  left: 71.957%;
+  top: 48.187%;
+  width: 22.174%;
+  height: auto;
+  will-change: transform, opacity;
+}
+
+.scene__chart {
+  position: absolute;
+  left: 2.5vw;
+  top: calc(var(--logo-cy) + 4svh);
+  width: min(31vw, 500px, calc(52svh * 1.28));
+  aspect-ratio: 640 / 500;
+  translate: 0 -50%;
+  overflow: visible;
+  filter: drop-shadow(0 0 8px rgb(0 176 228 / 0.55)) drop-shadow(0 22px 26px rgb(0 70 105 / 0.2));
+}
+.hc-base,
+.hc-bar,
+.hc-head {
+  transform-box: view-box;
+}
+.hc-arrow path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+@media (max-width: 700px) {
+  .scene__house {
+    --w: 172vw;
+    right: auto;
+    left: -66vw;
+    translate: 0 -50%;
+  }
+  .scene__chart {
+    top: auto;
+    bottom: 2svh;
+    left: 3vw;
+    width: 50vw;
+    translate: none;
+  }
+}
+
+/* movimento reduzido: cena completa e parada; some depois do hero */
+.rm .scene {
+  transition: opacity 0.6s linear;
+}
+.rm .stage.is-past-hero .scene {
+  opacity: 0;
+}

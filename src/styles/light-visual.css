@@ -461,14 +461,14 @@ html[data-smoke='webgl'] .stage__ribbons { display: none; }
   }
 }
 
-/* no hero a logo 3D fica à frente da fumaça (nítida); a logo estática pós-hero continua atrás */
+/* no hero a logo 3D fica à frente da fumaça e da cena (casa, carro, gráfico, z-index 2); a logo estática pós-hero continua atrás */
 .smoke {
   z-index: 1;
 }
 .stage__logo3d,
 .stage__logo-fallback {
-  z-index: 2;
+  z-index: 3;
 }
 .stage__vignette {
-  z-index: 3;
+  z-index: 4;
 }

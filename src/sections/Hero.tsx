@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger, getLenis, gsap, reducedMotion, scene, scrollToSection } from '../lib/motion';
+import { renderChart } from '../components/HeroScene';
 
 const NAME = 'M2F Associados';
 
@@ -10,8 +11,8 @@ export function Hero() {
   // quem navega pelo teclado não pode focar um botão ainda invisível: rola até ele aparecer
   const revealOnFocus = () => {
     const el = root.current;
-    if (!el || reducedMotion || scene.heroProgress > 0.5) return;
-    const y = el.offsetTop + (el.offsetHeight - window.innerHeight) * 0.55;
+    if (!el || reducedMotion || scene.heroProgress > 0.86) return;
+    const y = el.offsetTop + (el.offsetHeight - window.innerHeight) * 0.9;
     const lenis = getLenis();
     if (lenis) lenis.scrollTo(y, { immediate: true });
     else window.scrollTo(0, y);
@@ -21,7 +22,12 @@ export function Hero() {
     () => {
       // camadas fixas ficam fora do escopo da seção: referências diretas
       const $ = (sel: string) => document.querySelectorAll<HTMLElement>(sel);
+      const sceneEl = document.querySelector<HTMLElement>('.scene');
+      const house = document.querySelector<HTMLElement>('.scene__house');
+      const car = document.querySelector<HTMLElement>('.scene__carro');
+      const chart = document.querySelector<SVGSVGElement>('.scene__chart');
       if (reducedMotion) {
+        if (chart) renderChart(chart, 1);
         // sem animação: só troca a logo do fundo depois do hero
         const stageEl = document.querySelector('.stage');
         ScrollTrigger.create({
@@ -69,24 +75,41 @@ export function Hero() {
       const state = { p: 0 };
 
       // Estado do hero é função pura do progresso: ida e volta da rolagem sempre batem.
+      // Ordem: casa → carro estacionando no mesmo lugar → gráfico crescendo → nome, chamada e botões.
       const render = () => {
         const p = state.p;
-        const e = out2(clamp(p / 0.42));
+        if (house) {
+          const h = out3(clamp(p / 0.2));
+          house.style.opacity = String(h);
+          house.style.transform = `translate3d(0, ${(7 * (1 - h)).toFixed(2)}%, 0) scale(${(1.07 - 0.07 * h).toFixed(4)})`;
+          house.style.filter = h > 0.99 ? 'none' : `blur(${(8 * (1 - h)).toFixed(2)}px)`;
+        }
+        if (car) {
+          const c = clamp((p - 0.2) / 0.2);
+          const e = out3(c);
+          car.style.opacity = String(clamp(c * 3));
+          car.style.transform = `translate3d(${(55 * (1 - e)).toFixed(2)}%, ${(-16 * (1 - e)).toFixed(2)}%, 0) scale(${(0.8 + 0.2 * e).toFixed(4)})`;
+        }
+        if (chart) renderChart(chart, clamp((p - 0.38) / 0.24));
+
+        // texto: a mesma entrada de antes, comprimida no trecho final
+        const q = clamp((p - 0.6) / 0.24) * 0.56;
+        const e = out2(clamp(q / 0.42));
         gsap.set(nameEl, { y: toLogo * (1 - e), scale: 2.3 - 1.3 * e });
         chars.forEach((c, i) => {
-          const t = out3(clamp((p - 0.02 - rank[i] * 0.03) / 0.26));
+          const t = out3(clamp((q - 0.02 - rank[i] * 0.03) / 0.26));
           c.style.opacity = String(t);
           c.style.filter = t > 0.99 ? 'none' : `blur(${(14 * (1 - t)).toFixed(2)}px)`;
           c.style.transform = `translateY(${(drift[i] * (1 - t)).toFixed(1)}%)`;
         });
-        rule.style.transform = `scaleX(${out3(clamp((p - 0.26) / 0.2))})`;
+        rule.style.transform = `scaleX(${out3(clamp((q - 0.26) / 0.2))})`;
         reveals.forEach((r, j) => {
-          const t = out3(clamp((p - 0.3 - j * 0.05) / 0.16));
+          const t = out3(clamp((q - 0.3 - j * 0.05) / 0.16));
           r.style.opacity = String(t);
           r.style.transform = `translateY(${(26 * (1 - t)).toFixed(1)}px)`;
           r.style.pointerEvents = t > 0.6 ? 'auto' : 'none';
         });
-        cue.style.opacity = String(1 - clamp(p / 0.08));
+        cue.style.opacity = String(1 - clamp(p / 0.05));
       };
       measure();
       render();
@@ -111,14 +134,15 @@ export function Hero() {
       });
 
       gsap.set($('.stage__static-logo'), { opacity: 0, scale: 0.92 });
-      // saída: a logo 3D para de frente, embranquece e dá lugar à logo escultural estática
+      // saída (depois que tudo entrou): a cena se desfaz, a logo 3D para de frente,
+      // embranquece e dá lugar à logo escultural estática
       const vh = () => window.innerHeight;
       gsap
         .timeline({
           defaults: { ease: 'none' },
           scrollTrigger: {
             trigger: root.current,
-            start: () => `top+=${vh() * 0.7} top`,
+            start: () => `top+=${(el.offsetHeight - vh()) * 0.88} top`,
             end: () => `bottom top+=${vh() * 0.45}`,
             scrub: 0.5,
             invalidateOnRefresh: true,
@@ -128,6 +152,7 @@ export function Hero() {
             },
           },
         })
+        .to(sceneEl, { opacity: 0, scale: 1.05, duration: 0.55 }, 0)
         .to($('.stage__rings'), { opacity: 0.045, duration: 1 }, 0)
         .to($('.stage__aura'), { opacity: 0, duration: 0.8 }, 0)
         .to($('.stage__logo-fallback'), { opacity: 0, duration: 0.6 }, 0.4)

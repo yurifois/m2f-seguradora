@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { SmokeCanvas } from './SmokeCanvas';
+import { HeroScene } from './HeroScene';
 import { reducedMotion, scene } from '../lib/motion';
 
 function hasWebGL() {
@@ -13,7 +14,7 @@ function hasWebGL() {
 
 /**
  * Camadas fixas atrás do conteúdo, de trás para frente:
- * anéis da marca → aura → logo branca estática → logo 3D → fumaça → vinheta.
+ * anéis da marca → aura → logo branca estática → fumaça → cena do hero (casa, carro, gráfico) → logo 3D → vinheta.
  */
 export function BackgroundStage({ variant = 'hero' }: { variant?: 'hero' | 'static' }) {
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -77,6 +78,7 @@ export function BackgroundStage({ variant = 'hero' }: { variant?: 'hero' | 'stat
       <img className="stage__logo-fallback" src="/img/logo-3d-fallback.webp" alt="" />
       <canvas className="stage__logo3d" ref={canvasRef} />
       <SmokeCanvas />
+      {variant === 'hero' && <HeroScene />}
       <div className="stage__vignette" />
     </div>
     <div className="stage__ribbons" aria-hidden="true" />
