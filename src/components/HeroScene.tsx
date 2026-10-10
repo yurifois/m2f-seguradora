@@ -1,44 +1,23 @@
 import '../styles/scene.css';
+import { Casa, Obra } from './HeroBuild';
+import { boxFaces, clamp, out2, out3 } from './glass';
 
 /*
- * Cena do hero (fica no palco fixo, entre a fumaça e a logo 3D):
- * casa → carro estacionando → os dois viram poeira → gráfico de vidro subindo num canto,
- * estetoscópio com o traçado do batimento no outro, avião cruzando o topo de ponta a ponta.
+ * Cena do hero (fica no palco fixo, entre a fumaça e a logo 3D), tudo em vidro turquesa:
+ * prédio em construção e casa sendo erguida, carro chegando → os dois viram poeira → gráfico
+ * subindo num canto, estetoscópio com o traçado do batimento no outro, avião cruzando o topo.
  * O Hero controla tudo pela rolagem; aqui ficam a marcação e o desenho de cada peça.
  */
 
-/** Onde o carro estaciona, em frações da imagem da casa (mesmo lugar da composição original). */
-export const CAR_BOX = { left: 0.72772, top: 0.49006, width: 0.21522 };
-
-const clamp = (v: number) => Math.min(1, Math.max(0, v));
-const out3 = (t: number) => 1 - Math.pow(1 - t, 3);
-const out2 = (t: number) => 1 - (1 - t) * (1 - t);
-
 /* ---------------------------------------------------------------- gráfico de vidro */
 
-// projeção oblíqua: profundidade vai para a direita e para cima; o conjunto ainda é
-// inclinado em diagonal (skewY no grupo), subindo da esquerda para a direita
-const DX = 24;
-const DY = -14;
+// o gráfico ainda é inclinado em diagonal (skewY no grupo), subindo da esquerda para a direita
 const BASE = { x0: 20, x1: 560, y: 440, thick: 18, depth: 2.6 };
 const BAR_W = 72;
 const BAR_DEPTH = 1.6;
-const BAR_Y = BASE.y - (BASE.depth * -DY) / 2 + 2; // assentadas no meio do tampo
+const BAR_Y = BASE.y - (BASE.depth * 14) / 2 + 2; // assentadas no meio do tampo
 const BARS = [64, 112, 165, 225, 292].map((h, i) => ({ x: 56 + i * 102, h }));
 const ARROW = 'M 34 356 C 210 330, 400 250, 552 96';
-
-const pts = (p: number[][]) => p.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
-
-function boxFaces(x: number, yBottom: number, w: number, h: number, depth: number) {
-  const dx = DX * depth;
-  const dy = DY * depth;
-  const top = yBottom - h;
-  return {
-    front: pts([[x, top], [x + w, top], [x + w, yBottom], [x, yBottom]]),
-    side: pts([[x + w, top], [x + w + dx, top + dy], [x + w + dx, yBottom + dy], [x + w, yBottom]]),
-    lid: pts([[x, top], [x + dx, top + dy], [x + w + dx, top + dy], [x + w, top]]),
-  };
-}
 
 /** Desenha o gráfico no progresso t (0 → 1): base, barras subindo uma a uma, seta riscando o caminho. */
 export function renderChart(svg: SVGSVGElement, t: number) {
@@ -335,24 +314,8 @@ function Sky() {
 export function HeroScene() {
   return (
     <div className="scene">
-      <div className="scene__house">
-        <img
-          className="scene__casa"
-          src="/img/hero/casa.webp"
-          srcSet="/img/hero/casa-1100.webp 1100w, /img/hero/casa.webp 1840w"
-          sizes="(max-width: 700px) 172vw, 100vw"
-          alt=""
-          decoding="async"
-          fetchPriority="high"
-        />
-        <img
-          className="scene__carro"
-          src="/img/hero/carro.webp"
-          alt=""
-          decoding="async"
-          style={{ left: `${CAR_BOX.left * 100}%`, top: `${CAR_BOX.top * 100}%`, width: `${CAR_BOX.width * 100}%` }}
-        />
-      </div>
+      <Obra />
+      <Casa />
       <canvas className="scene__dust" />
       <Chart />
       <Health />

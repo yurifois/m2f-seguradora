@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger, getLenis, gsap, reducedMotion, scene, scrollToSection } from '../lib/motion';
-import { CAR_BOX, renderChart, renderHealth, renderPlane } from '../components/HeroScene';
-import { createDust, type Dust } from '../components/dustEffect';
+import { renderChart, renderHealth, renderPlane } from '../components/HeroScene';
+import { renderCasa, renderObra } from '../components/HeroBuild';
+import { createDust, snapshotSvg, type Dust } from '../components/dustEffect';
 
 const NAME = 'M2F Associados';
 
@@ -24,8 +25,8 @@ export function Hero() {
       // camadas fixas ficam fora do escopo da seção: referências diretas
       const $ = (sel: string) => document.querySelectorAll<HTMLElement>(sel);
       const sceneEl = document.querySelector<HTMLElement>('.scene');
-      const house = document.querySelector<HTMLElement>('.scene__house');
-      const car = document.querySelector<HTMLElement>('.scene__carro');
+      const obra = document.querySelector<SVGSVGElement>('.scene__obra');
+      const casa = document.querySelector<SVGSVGElement>('.scene__casa');
       const chart = document.querySelector<SVGSVGElement>('.scene__chart');
       const health = document.querySelector<SVGSVGElement>('.scene__health');
       const sky = document.querySelector<SVGSVGElement>('.scene__sky');
@@ -79,32 +80,35 @@ export function Hero() {
       const out3 = (t: number) => 1 - Math.pow(1 - t, 3);
       const state = { p: 0 };
 
-      // casa + carro viram poeira (WebGL2); sem suporte, só esmaecem
+      // prédio e casa (com o carro) viram poeira (WebGL2); sem suporte, só esmaecem
       const dustCanvas = document.querySelector<HTMLCanvasElement>('.scene__dust');
-      const casaImg = document.querySelector<HTMLImageElement>('.scene__casa');
       let dust: Dust | null = null;
-      if (dustCanvas && house && casaImg && car) {
-        dust = createDust(dustCanvas, house, casaImg, car as HTMLImageElement, CAR_BOX);
+      if (dustCanvas && obra && casa) {
+        const mobile = window.innerWidth < 700;
+        dust = createDust(
+          dustCanvas,
+          [
+            { el: obra, source: () => snapshotSvg(obra, (c) => renderObra(c, 1)) },
+            { el: casa, source: () => snapshotSvg(casa, (c) => renderCasa(c, 1, 1)) },
+          ],
+          mobile ? 1.8 : 2.4,
+        );
       }
 
       // Estado do hero é função pura do progresso: ida e volta da rolagem sempre batem.
-      // Ordem: casa → carro estaciona → os dois viram poeira → gráfico sobe num canto, estetoscópio
-      // e batimento no outro, avião cruza o topo → nome, chamada e botões.
+      // Ordem: prédio e casa se construindo → carro chega até a casa → tudo vira poeira → gráfico
+      // sobe num canto, estetoscópio e batimento no outro, avião cruza o topo → nome, chamada e botões.
       const render = () => {
         const p = state.p;
         const u = clamp((p - 0.27) / 0.17); // poeira
-        if (house) {
-          const h = out3(clamp(p / 0.12));
-          const fx = dust?.ready ? (u > 0 ? 0 : 1) : 1 - u;
-          house.style.opacity = String(h * fx);
-          house.style.transform = `translate3d(0, ${(7 * (1 - h)).toFixed(2)}%, 0) scale(${(1.07 - 0.07 * h).toFixed(4)})`;
-          house.style.filter = h > 0.99 ? 'none' : `blur(${(8 * (1 - h)).toFixed(2)}px)`;
+        const fx = dust?.ready ? (u > 0 ? 0 : 1) : 1 - u;
+        if (obra) {
+          renderObra(obra, clamp(p / 0.17));
+          obra.style.opacity = String(fx);
         }
-        if (car) {
-          const c = clamp((p - 0.11) / 0.12);
-          const e = out3(c);
-          car.style.opacity = String(clamp(c * 3));
-          car.style.transform = `translate3d(${(55 * (1 - e)).toFixed(2)}%, ${(-16 * (1 - e)).toFixed(2)}%, 0) scale(${(0.8 + 0.2 * e).toFixed(4)})`;
+        if (casa) {
+          renderCasa(casa, clamp((p - 0.03) / 0.17), clamp((p - 0.13) / 0.12));
+          casa.style.opacity = String(fx);
         }
         dust?.render(u);
         if (chart) {

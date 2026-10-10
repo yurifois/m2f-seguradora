@@ -30,9 +30,10 @@ VITE_LEAD_ENDPOINT=https://seu-endpoint/leads
 ## Estrutura
 
 - `src/components/BackgroundStage.tsx` — camadas fixas: anéis da marca, logo 3D, logo branca estática, fumaça
-- `src/components/HeroScene.tsx` — cena do hero entre a fumaça e a logo 3D: casa (`public/img/hero/casa.webp`) e carro
-  (`carro.webp`) entram, viram poeira (`dustEffect.ts`, WebGL2) e dão lugar ao gráfico de vidro, ao estetoscópio com
-  batimento e ao avião cruzando o topo — tudo em SVG, amarrado à rolagem
+- `src/components/HeroScene.tsx` + `HeroBuild.tsx` — cena do hero entre a fumaça e a logo 3D, toda em vidro turquesa
+  (SVG): prédio em construção com guindaste e casa sendo erguida com o carro chegando; os dois viram poeira
+  (`dustEffect.ts`, WebGL2) e dão lugar ao gráfico, ao estetoscópio com batimento e ao avião cruzando o topo —
+  tudo amarrado à rolagem (`glass.tsx` tem a projeção e os degradês comuns)
 - `src/components/logo3dScene.ts` — cena Three.js (carregada sob demanda)
 - `src/components/SmokeCanvas.tsx` — shader da névoa
 - `src/sections/*` — Hero, Partners, Services, Quotes, Contact, Footer
