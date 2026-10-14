@@ -21,10 +21,12 @@ export function Header({ page = 'home' }: { page?: Page }) {
 
   // seção ativa (só na página inicial) + barra de progresso
   useEffect(() => {
+    // seções sem item próprio no menu acendem o item da seção anterior
+    const extra: [string, string][] = [['cotacao', 'sobre']];
     const triggers = home
-      ? NAV.map(({ id }) =>
+      ? [...NAV.map(({ id }): [string, string] => [id, id]), ...extra].map(([section, id]) =>
           ScrollTrigger.create({
-            trigger: `#${id}`,
+            trigger: `#${section}`,
             start: 'top 45%',
             end: 'bottom 45%',
             onToggle: (self) => self.isActive && setActive(id),

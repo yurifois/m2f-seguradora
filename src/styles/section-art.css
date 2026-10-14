@@ -110,10 +110,10 @@
 
 /* celular: os desenhos entram no fluxo, entre os blocos da seção, em vez de ficar atrás deles */
 @media not all and (min-width: 900px) {
-  .about {
+  .about__pin {
     flex-direction: column;
   }
-  .about > .container {
+  .about__pin > .container {
     width: 100%;
   }
   .gart--obra {

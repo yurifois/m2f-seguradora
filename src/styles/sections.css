@@ -154,10 +154,6 @@
 
 .quick {
   position: relative;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  padding: calc(var(--header-h) + clamp(16px, 4svh, 48px)) 0 clamp(32px, 6svh, 72px);
 }
 .quick__grid {
   display: grid;
@@ -217,11 +213,43 @@
 
 .about {
   position: relative;
+}
+
+/* Sobre e Cotação: o conteúdo cabe numa tela abaixo do menu; no computador a seção trava
+   (como Associados) enquanto o desenho do fundo se monta com a rolagem */
+.about__pin,
+.quick__pin {
+  position: relative;
   min-height: 100svh;
   display: flex;
   align-items: center;
-  padding: calc(var(--header-h) + clamp(16px, 4svh, 48px)) 0 clamp(32px, 6svh, 72px);
+  padding: calc(var(--header-h) + clamp(10px, 3svh, 40px)) 0 clamp(18px, 4svh, 56px);
 }
+@media (min-width: 900px) and (min-height: 560px) {
+  .about,
+  .quick {
+    height: 175svh;
+  }
+  .about__pin,
+  .quick__pin {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    min-height: 0;
+  }
+}
+.rm .about,
+.rm .quick {
+  height: auto;
+}
+.rm .about__pin,
+.rm .quick__pin {
+  position: relative;
+  height: auto;
+  min-height: 100svh;
+}
+
+
 .about__grid {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
@@ -339,7 +367,7 @@
   color: var(--fg-2);
 }
 @media (max-width: 900px) {
-  .about {
+  .about__pin {
     min-height: 0;
   }
   .about__grid {

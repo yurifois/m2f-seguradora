@@ -81,68 +81,71 @@ export function About() {
   );
 
   return (
-    <section id="sobre" className="about" ref={root} data-nav-flush aria-labelledby="sobre-title">
-      <SectionArt kind="obra" start="top 75%" end="bottom 95%" inFlowOnMobile />
-      <div className="container about__grid">
-        <div className="about__main">
-          <header className="section-heading section-heading--left">
-            <p className="kicker">
-              <span aria-hidden="true" />
-              O que fazemos
-            </p>
-            <h2 id="sobre-title" className="display">
-              Foco em <em>resultado</em>, não em promessa.
-            </h2>
-          </header>
-          <p className="about__statement">
-            {STATEMENT.split(' ').map((w, i) => (
-              <span key={i} className="about__word">
-                {w}{' '}
-              </span>
-            ))}
-          </p>
-          <p className="about__trust">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="11" cy="13" r="8" />
-              <circle cx="11" cy="13" r="4.5" />
-              <circle cx="11" cy="13" r="1.2" />
-              <path d="M11 13l9-9M17 4h3v3" />
-            </svg>
-            <span>
-              <strong>Consórcio não é sorte.</strong>
-              <strong>Trabalhamos com estratégia.</strong>
-            </span>
-          </p>
-          <a className="btn btn--ghost about__faq" href={FAQ_PATH}>
-            Tire suas dúvidas sobre consórcio
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </a>
-        </div>
-
-        <div className="about__pillars">
-          <span className="about__rail" aria-hidden="true">
-            <i />
-          </span>
-          <ol>
-            {PILLARS.map((p, i) => (
-              <li key={p.title} className="about__pillar">
-                <span className="about__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    {PILLAR_ICONS[i].map((d) => (
-                      <path key={d} d={d} />
-                    ))}
-                  </svg>
+    <section id="sobre" className="about" ref={root} data-nav-settle="0.85" aria-labelledby="sobre-title">
+      <div className="about__pin">
+        {/* a seção trava na tela e o prédio se constrói enquanto ela está parada */}
+        <SectionArt kind="obra" start="top 10%" end="bottom bottom" inFlowOnMobile />
+        <div className="container about__grid">
+          <div className="about__main">
+            <header className="section-heading section-heading--left">
+              <p className="kicker">
+                <span aria-hidden="true" />
+                O que fazemos
+              </p>
+              <h2 id="sobre-title" className="display">
+                Foco em <em>resultado</em>, não em promessa.
+              </h2>
+            </header>
+            <p className="about__statement">
+              {STATEMENT.split(' ').map((w, i) => (
+                <span key={i} className="about__word">
+                  {w}{' '}
                 </span>
-                <span className="about__num">0{i + 1}</span>
-                <div>
-                  <h3>{p.title}</h3>
-                  <p>{p.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+              ))}
+            </p>
+            <p className="about__trust">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="11" cy="13" r="8" />
+                <circle cx="11" cy="13" r="4.5" />
+                <circle cx="11" cy="13" r="1.2" />
+                <path d="M11 13l9-9M17 4h3v3" />
+              </svg>
+              <span>
+                <strong>Consórcio não é sorte.</strong>
+                <strong>Trabalhamos com estratégia.</strong>
+              </span>
+            </p>
+            <a className="btn btn--ghost about__faq" href={FAQ_PATH}>
+              Tire suas dúvidas sobre consórcio
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </a>
+          </div>
+
+          <div className="about__pillars">
+            <span className="about__rail" aria-hidden="true">
+              <i />
+            </span>
+            <ol>
+              {PILLARS.map((p, i) => (
+                <li key={p.title} className="about__pillar">
+                  <span className="about__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      {PILLAR_ICONS[i].map((d) => (
+                        <path key={d} d={d} />
+                      ))}
+                    </svg>
+                  </span>
+                  <span className="about__num">0{i + 1}</span>
+                  <div>
+                    <h3>{p.title}</h3>
+                    <p>{p.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </section>

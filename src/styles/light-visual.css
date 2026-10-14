@@ -237,6 +237,7 @@ html[data-smoke='webgl'] .stage__ribbons { display: none; }
   .svc__zero { right: 20px; font-size: 5.8rem; }
 }
 @media (max-width: 900px) { .about__pillars { padding: 24px; } }
+
 @media (max-width: 740px) {
   .services__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
   .svc, .svc[data-service] { grid-column: auto; grid-row: auto; min-height: 310px; padding: 22px; }
@@ -517,4 +518,66 @@ html[data-smoke='webgl'] .stage__ribbons { display: none; }
   width: 18px;
   margin-left: 0;
   opacity: 1;
+}
+
+/* telas baixas (notebooks): tudo um pouco menor para caber inteiro abaixo do menu */
+@media (min-width: 900px) and (max-height: 800px) {
+  .about .display,
+  .quick .display {
+    font-size: clamp(2rem, 1rem + 1.6vw + 2.4svh, 3.4rem);
+  }
+  .about__main {
+    gap: clamp(10px, 2.2svh, 22px);
+  }
+  .about__statement {
+    font-size: clamp(1rem, 0.6rem + 0.6vw + 1.2svh, 1.45rem);
+  }
+  .about__pillar {
+    padding: clamp(8px, 1.7svh, 16px) 0;
+  }
+  .about__pillar h3 {
+    font-size: clamp(1.05rem, 0.7rem + 0.5vw + 0.8svh, 1.35rem);
+  }
+  .about__pillar p {
+    margin-top: 4px;
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+  .quick__intro {
+    gap: 6px;
+  }
+  .quick__art {
+    width: min(100%, 360px, calc(38svh * 1.143));
+  }
+  .quick__card {
+    padding: clamp(18px, 2.6svh, 28px) clamp(20px, 2vw, 30px);
+  }
+  .quick__form {
+    gap: clamp(8px, 1.5svh, 14px);
+  }
+  /* calculadora: encosta no menu em vez de reservar 72px em cima e embaixo */
+  .quotes {
+    padding: calc(var(--header-h) + 1svh) 0 2svh;
+  }
+  .quotes .display {
+    font-size: clamp(1.9rem, 1rem + 1.5vw + 2.2svh, 3.2rem);
+  }
+}
+@media (min-width: 900px) and (max-height: 620px) {
+  .about__statement {
+    font-size: 0.98rem;
+  }
+  .about__trust {
+    display: none;
+  }
+  .about__pillar p {
+    font-size: 0.8rem;
+  }
+}
+@media (min-width: 900px) and (max-height: 800px) {
+  .about__pillars { padding: clamp(16px, 2.6svh, 26px) clamp(20px, 2vw, 30px); }
+  .about__icon { width: 44px; height: 44px; }
+  .about__icon svg { width: 22px; height: 22px; }
+  .about__trust { padding: 12px 18px; }
+  .about__trust svg { width: 32px; height: 32px; }
 }
