@@ -93,7 +93,9 @@ export function scrollToSection(id: string, { immediate = false } = {}) {
   const el = document.getElementById(id);
   if (!el) return;
   const header = 64;
-  let y = el.getBoundingClientRect().top + window.scrollY;
+  // seção dentro de uma trava (Hold) pode estar grudada na tela: mede pela caixa da trava
+  const box = el.parentElement?.classList.contains('hold') ? el.parentElement : el;
+  let y = box.getBoundingClientRect().top + window.scrollY;
   const settle = parseFloat(el.dataset.navSettle ?? '0');
   if (settle > 0) {
     y += Math.max(0, el.offsetHeight - window.innerHeight) * settle;

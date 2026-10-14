@@ -195,8 +195,30 @@ main {
   z-index: 2;
 }
 /* cards e fragmentos começam fora da tela: nunca podem alargar a página */
-main > section {
+main > section,
+.hold > section {
   overflow-x: clip;
+}
+
+/* trava no fim da seção (Hold.tsx): a caixa fica mais alta que a seção e a seção gruda na tela
+   por esse trecho — no topo, se couber na tela; com o pé no pé da tela, se for mais alta */
+@media (min-width: 900px) and (min-height: 560px) {
+  .hold {
+    --hold: 40svh;
+    height: calc(var(--h, 100svh) + var(--hold));
+  }
+  .hold > section {
+    position: sticky;
+    top: min(0px, calc(100svh - var(--h, 100svh)));
+  }
+  html.is-measuring .hold > section,
+  .rm .hold > section {
+    position: relative;
+    top: auto;
+  }
+  .rm .hold {
+    height: auto;
+  }
 }
 
 .container {

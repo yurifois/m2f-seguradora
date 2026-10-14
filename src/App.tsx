@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BackgroundStage } from './components/BackgroundStage';
+import { Hold } from './components/Hold';
 import { Header } from './components/Header';
 import { WhatsAppFab } from './components/WhatsAppFab';
 import { Hero } from './sections/Hero';
@@ -48,9 +49,16 @@ export default function App() {
         <About />
         <QuickQuote />
         <Partners />
-        <Services />
-        <Quotes />
-        <Contact />
+        {/* Hero, Sobre, Cotação e Associados já travam por dentro; estas ganham a trava no fim */}
+        <Hold>
+          <Services />
+        </Hold>
+        <Hold>
+          <Quotes />
+        </Hold>
+        <Hold>
+          <Contact />
+        </Hold>
       </main>
       <Footer />
       <WhatsAppFab />

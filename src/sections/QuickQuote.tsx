@@ -108,7 +108,7 @@ export function QuickQuote() {
               </p>
             </header>
             <div className="quick__art">
-              <SectionArt kind="casa" start="top 10%" end="bottom bottom" inFlowOnMobile />
+              <SectionArt kind="casa" start="top 10%" end="bottom 135%" inFlowOnMobile />
             </div>
           </div>
 

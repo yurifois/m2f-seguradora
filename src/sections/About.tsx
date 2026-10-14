@@ -84,7 +84,7 @@ export function About() {
     <section id="sobre" className="about" ref={root} data-nav-settle="0.85" aria-labelledby="sobre-title">
       <div className="about__pin">
         {/* a seção trava na tela e o prédio se constrói enquanto ela está parada */}
-        <SectionArt kind="obra" start="top 10%" end="bottom bottom" inFlowOnMobile />
+        <SectionArt kind="obra" start="top 10%" end="bottom 135%" inFlowOnMobile />
         <div className="container about__grid">
           <div className="about__main">
             <header className="section-heading section-heading--left">
