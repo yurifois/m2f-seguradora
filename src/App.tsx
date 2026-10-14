@@ -12,11 +12,13 @@ import { Quotes } from './sections/Quotes';
 import { Contact } from './sections/Contact';
 import { Footer } from './sections/Footer';
 import { ScrollTrigger, initSmoothScroll, reducedMotion, scrollToSection } from './lib/motion';
+import { initSnap } from './lib/snap';
 
 export default function App() {
   useEffect(() => {
     document.documentElement.classList.toggle('rm', reducedMotion);
     initSmoothScroll();
+    const stopSnap = initSnap();
     // fontes mudam métricas: recalcula as posições das cenas quando carregarem
     document.fonts?.ready.then(() => ScrollTrigger.refresh());
     // chegou com #seção (vindo da página de dúvidas): tira a âncora para o navegador não
@@ -34,7 +36,10 @@ export default function App() {
     }
     const onLoad = () => ScrollTrigger.refresh();
     window.addEventListener('load', onLoad);
-    return () => window.removeEventListener('load', onLoad);
+    return () => {
+      window.removeEventListener('load', onLoad);
+      stopSnap();
+    };
   }, []);
 
   return (

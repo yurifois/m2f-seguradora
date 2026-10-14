@@ -204,7 +204,7 @@ main > section,
    por esse trecho — no topo, se couber na tela; com o pé no pé da tela, se for mais alta */
 @media (min-width: 900px) and (min-height: 560px) {
   .hold {
-    --hold: 40svh;
+    --hold: 55svh;
     height: calc(var(--h, 100svh) + var(--hold));
   }
   .hold > section {
