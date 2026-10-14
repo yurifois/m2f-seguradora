@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { CONTACT, PRODUCT_LABEL, waLink, type ProductId } from '../data/content';
 import { getLenis, gsap, reducedMotion, scrubIn } from '../lib/motion';
-import { onLeadDraft } from '../lib/lead';
+import { maskPhone, onLeadDraft, submitLead } from '../lib/lead';
+import { Field } from '../components/Field';
 
 /* ---------- fragmentos: triângulos de uma malha irregular que montam o painel ---------- */
 
@@ -97,14 +98,6 @@ const EMPTY: Values = {
 };
 
 type Errors = Partial<Record<'nome' | 'whatsapp' | 'email' | 'produtos' | 'consentimento', string>>;
-
-const maskPhone = (v: string) => {
-  const d = v.replace(/\D/g, '').slice(0, 11);
-  if (d.length <= 2) return d ? `(${d}` : '';
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-};
 
 function validate(v: Values): Errors {
   const e: Errors = {};
@@ -308,24 +301,8 @@ export function Contact() {
     }
     const message = buildMessage(v);
     setLastMessage(message);
-    const endpoint = import.meta.env.VITE_LEAD_ENDPOINT as string | undefined;
-    if (endpoint) {
-      setStatus('sending');
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...v, site: undefined, mensagemFormatada: message, origem: 'site' }),
-        });
-        if (!res.ok) throw new Error(String(res.status));
-        setStatus('sent');
-      } catch {
-        setStatus('error');
-      }
-      return;
-    }
-    window.open(waLink(message), '_blank', 'noopener');
-    setStatus('whatsapp');
+    setStatus('sending');
+    setStatus(await submitLead({ ...v, site: undefined, origem: 'site' }, message));
   };
 
   const first = v.nome.trim().split(' ')[0];
@@ -734,21 +711,5 @@ export function Contact() {
         </div>
       </div>
     </section>
-  );
-}
-
-function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
-  return (
-    <div className={`field${error ? ' has-error' : ''}`}>
-      <div className="field__label">
-        <label htmlFor={id}>{label}</label>
-        {error ? (
-          <span className="field__error" id={`${id}-err`}>
-            {error}
-          </span>
-        ) : null}
-      </div>
-      {children}
-    </div>
   );
 }

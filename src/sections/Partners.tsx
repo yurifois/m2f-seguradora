@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react';
 import { PARTNERS } from '../data/content';
 import { DESKTOP_MQ, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { SectionHeading } from '../components/SectionHeading';
+import { SectionArt } from '../components/GlassArt';
 
 type Metrics = { startX: number; startY: number; arc: number };
 
@@ -109,6 +110,7 @@ export function Partners() {
   return (
     <section id="associados" className="partners" ref={root} data-nav-settle="0.86" aria-labelledby="associados-title">
       <div className="partners__pin">
+        <SectionArt kind="saude" start="top 55%" end="top -60%" inFlowOnMobile />
         <SectionHeading
           id="associados-title"
           kicker="Nosso time"

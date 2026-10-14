@@ -5,6 +5,7 @@ import { finePointer, gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { SectionHeading } from '../components/SectionHeading';
 import { Icon } from '../components/Icon';
 import { ServiceArt } from '../components/ServiceArt';
+import { SectionArt } from '../components/GlassArt';
 import '../styles/art.css';
 import { sendToForm } from '../lib/lead';
 import { selectQuoteTab } from './Quotes';
@@ -61,6 +62,7 @@ export function Services() {
 
   return (
     <section id="servicos" className="services" ref={root} aria-labelledby="servicos-title">
+      <SectionArt kind="aviao" start="top 85%" end="top -25%" />
       <div className="container">
         <div className="services__top">
           <SectionHeading

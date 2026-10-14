@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { WhatsAppFab } from './components/WhatsAppFab';
 import { Hero } from './sections/Hero';
 import { About } from './sections/About';
+import { QuickQuote } from './sections/QuickQuote';
 import { Partners } from './sections/Partners';
 import { Services } from './sections/Services';
 import { Quotes } from './sections/Quotes';
@@ -45,6 +46,7 @@ export default function App() {
       <main>
         <Hero />
         <About />
+        <QuickQuote />
         <Partners />
         <Services />
         <Quotes />

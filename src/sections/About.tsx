@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap, reducedMotion, scrubIn } from '../lib/motion';
 import { FAQ_PATH } from '../data/faq';
+import { SectionArt } from '../components/GlassArt';
 
 const STATEMENT =
   'A M2F Associados é uma consultoria de consórcios e investimentos com sede em Brasília. Aqui você não compra uma cota e fica sozinho: um especialista acompanha cada passo — da escolha do crédito à contemplação — e decide com você o melhor destino para ele.';
@@ -81,6 +82,7 @@ export function About() {
 
   return (
     <section id="sobre" className="about" ref={root} data-nav-flush aria-labelledby="sobre-title">
+      <SectionArt kind="obra" start="top 75%" end="bottom 95%" inFlowOnMobile />
       <div className="container about__grid">
         <div className="about__main">
           <header className="section-heading section-heading--left">

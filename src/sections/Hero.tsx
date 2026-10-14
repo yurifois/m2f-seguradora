@@ -1,9 +1,6 @@
 import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger, getLenis, gsap, reducedMotion, scene, scrollToSection } from '../lib/motion';
-import { renderChart, renderHealth, renderPlane } from '../components/HeroScene';
-import { renderCasa, renderObra } from '../components/HeroBuild';
-import { createDust, snapshotSvg, type Dust } from '../components/dustEffect';
 
 const NAME = 'M2F Associados';
 
@@ -13,8 +10,8 @@ export function Hero() {
   // quem navega pelo teclado não pode focar um botão ainda invisível: rola até ele aparecer
   const revealOnFocus = () => {
     const el = root.current;
-    if (!el || reducedMotion || scene.heroProgress > 0.86) return;
-    const y = el.offsetTop + (el.offsetHeight - window.innerHeight) * 0.9;
+    if (!el || reducedMotion || scene.heroProgress > 0.5) return;
+    const y = el.offsetTop + (el.offsetHeight - window.innerHeight) * 0.55;
     const lenis = getLenis();
     if (lenis) lenis.scrollTo(y, { immediate: true });
     else window.scrollTo(0, y);
@@ -24,15 +21,7 @@ export function Hero() {
     () => {
       // camadas fixas ficam fora do escopo da seção: referências diretas
       const $ = (sel: string) => document.querySelectorAll<HTMLElement>(sel);
-      const sceneEl = document.querySelector<HTMLElement>('.scene');
-      const obra = document.querySelector<SVGSVGElement>('.scene__obra');
-      const casa = document.querySelector<SVGSVGElement>('.scene__casa');
-      const chart = document.querySelector<SVGSVGElement>('.scene__chart');
-      const health = document.querySelector<SVGSVGElement>('.scene__health');
-      const sky = document.querySelector<SVGSVGElement>('.scene__sky');
       if (reducedMotion) {
-        if (chart) renderChart(chart, 1);
-        if (health) renderHealth(health, 1);
         // sem animação: só troca a logo do fundo depois do hero
         const stageEl = document.querySelector('.stage');
         ScrollTrigger.create({
@@ -58,7 +47,6 @@ export function Hero() {
       const rule = el.querySelector<HTMLElement>('.hero__rule')!;
       const reveals = [...el.querySelectorAll<HTMLElement>('.hero__reveal')];
       const cue = el.querySelector<HTMLElement>('.hero__cue')!;
-      const veil = el.querySelector<HTMLElement>('.hero__veil')!;
 
       // ordem de entrada das letras: do centro para as pontas
       const mid = (chars.length - 1) / 2;
@@ -80,72 +68,25 @@ export function Hero() {
       const out3 = (t: number) => 1 - Math.pow(1 - t, 3);
       const state = { p: 0 };
 
-      // prédio e casa (com o carro) viram poeira (WebGL2); sem suporte, só esmaecem
-      const dustCanvas = document.querySelector<HTMLCanvasElement>('.scene__dust');
-      let dust: Dust | null = null;
-      if (dustCanvas && obra && casa) {
-        const mobile = window.innerWidth < 700;
-        dust = createDust(
-          dustCanvas,
-          [
-            { el: obra, source: () => snapshotSvg(obra, (c) => renderObra(c, 1)) },
-            { el: casa, source: () => snapshotSvg(casa, (c) => renderCasa(c, 1, 1)) },
-          ],
-          mobile ? 1.8 : 2.4,
-        );
-      }
-
       // Estado do hero é função pura do progresso: ida e volta da rolagem sempre batem.
-      // Ordem: prédio e casa se construindo → carro chega até a casa → tudo vira poeira → gráfico
-      // sobe num canto, estetoscópio e batimento no outro, avião cruza o topo → nome, chamada e botões.
       const render = () => {
         const p = state.p;
-        const u = clamp((p - 0.27) / 0.17); // poeira
-        const fx = dust?.ready ? (u > 0 ? 0 : 1) : 1 - u;
-        if (obra) {
-          renderObra(obra, clamp(p / 0.17));
-          obra.style.opacity = String(fx);
-        }
-        if (casa) {
-          renderCasa(casa, clamp((p - 0.03) / 0.17), clamp((p - 0.13) / 0.12));
-          casa.style.opacity = String(fx);
-        }
-        dust?.render(u);
-        if (chart) {
-          const tc = clamp((p - 0.37) / 0.19);
-          const r = out3(clamp(tc / 0.35));
-          chart.style.opacity = String(r);
-          chart.style.transform = `translate3d(0, ${(60 * (1 - r)).toFixed(1)}px, 0)`;
-          renderChart(chart, tc);
-        }
-        if (health) {
-          const th = clamp((p - 0.42) / 0.21);
-          const r = out3(clamp(th / 0.3));
-          health.style.opacity = String(r);
-          health.style.transform = `translate3d(0, ${(60 * (1 - r)).toFixed(1)}px, 0)`;
-          renderHealth(health, th);
-        }
-        if (sky) renderPlane(sky, clamp((p - 0.36) / 0.3));
-
-        // texto: a mesma entrada de antes, comprimida no trecho final
-        const q = clamp((p - 0.64) / 0.22) * 0.56;
-        veil.style.opacity = String(out2(clamp((p - 0.62) / 0.14)));
-        const e = out2(clamp(q / 0.42));
+        const e = out2(clamp(p / 0.42));
         gsap.set(nameEl, { y: toLogo * (1 - e), scale: 2.3 - 1.3 * e });
         chars.forEach((c, i) => {
-          const t = out3(clamp((q - 0.02 - rank[i] * 0.03) / 0.26));
+          const t = out3(clamp((p - 0.02 - rank[i] * 0.03) / 0.26));
           c.style.opacity = String(t);
           c.style.filter = t > 0.99 ? 'none' : `blur(${(14 * (1 - t)).toFixed(2)}px)`;
           c.style.transform = `translateY(${(drift[i] * (1 - t)).toFixed(1)}%)`;
         });
-        rule.style.transform = `scaleX(${out3(clamp((q - 0.26) / 0.2))})`;
+        rule.style.transform = `scaleX(${out3(clamp((p - 0.26) / 0.2))})`;
         reveals.forEach((r, j) => {
-          const t = out3(clamp((q - 0.3 - j * 0.05) / 0.16));
+          const t = out3(clamp((p - 0.3 - j * 0.05) / 0.16));
           r.style.opacity = String(t);
           r.style.transform = `translateY(${(26 * (1 - t)).toFixed(1)}px)`;
           r.style.pointerEvents = t > 0.6 ? 'auto' : 'none';
         });
-        cue.style.opacity = String(1 - clamp(p / 0.05));
+        cue.style.opacity = String(1 - clamp(p / 0.08));
       };
       measure();
       render();
@@ -170,15 +111,14 @@ export function Hero() {
       });
 
       gsap.set($('.stage__static-logo'), { opacity: 0, scale: 0.92 });
-      // saída (depois que tudo entrou): a cena se desfaz, a logo 3D para de frente,
-      // embranquece e dá lugar à logo escultural estática
+      // saída: a logo 3D para de frente, embranquece e dá lugar à logo escultural estática
       const vh = () => window.innerHeight;
       gsap
         .timeline({
           defaults: { ease: 'none' },
           scrollTrigger: {
             trigger: root.current,
-            start: () => `top+=${(el.offsetHeight - vh()) * 0.9} top`,
+            start: () => `top+=${vh() * 0.7} top`,
             end: () => `bottom top+=${vh() * 0.45}`,
             scrub: 0.5,
             invalidateOnRefresh: true,
@@ -188,13 +128,10 @@ export function Hero() {
             },
           },
         })
-        .to(sceneEl, { opacity: 0, scale: 1.05, duration: 0.55 }, 0)
         .to($('.stage__rings'), { opacity: 0.045, duration: 1 }, 0)
         .to($('.stage__aura'), { opacity: 0, duration: 0.8 }, 0)
         .to($('.stage__logo-fallback'), { opacity: 0, duration: 0.6 }, 0.4)
         .to($('.stage__static-logo'), { opacity: 0.045, scale: 1, duration: 0.55, ease: 'power1.out' }, 0.45);
-
-      return () => dust?.dispose();
     },
     { scope: root },
   );
@@ -203,7 +140,6 @@ export function Hero() {
     <section id="inicio" className="hero" ref={root} aria-label="Apresentação">
       <div className="hero__pin">
         <div className="hero__logo-space" aria-hidden="true" />
-        <div className="hero__veil" aria-hidden="true" />
         <h1 className="hero__name">
           <span className="sr-only">M2F Associados — consórcios, saúde e seguros</span>
           <span className="hero__name-inner" aria-hidden="true">
@@ -234,7 +170,7 @@ export function Hero() {
           </svg>
           </a>
           <a
-            className="btn btn--ghost"
+            className="btn btn--ghost btn--sweep"
             href="#sobre"
             onClick={(e) => {
               e.preventDefault();
@@ -242,6 +178,9 @@ export function Hero() {
             }}
           >
             Conhecer a M2F
+            <svg className="btn__more" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
           </a>
         </div>
 
